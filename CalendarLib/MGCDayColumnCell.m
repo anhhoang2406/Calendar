@@ -129,16 +129,6 @@ static const CGFloat dotSize = 5;
         self.dotLayer.position = CGPointMake(self.contentView.center.x, headerSize.height - 1.2 * dotSize - kPaddingBottom);
         self.dotLayer.fillColor = self.dotColor.CGColor;
         self.activityIndicatorView.center = CGPointMake(self.contentView.center.x, headerSize.height - 1.2 * dotSize);
-        
-        //Toan
-        //        if (self.accessoryTypes & MGCDayColumnCellAccessoryMark) {
-        //            self.dayLabel.layer.cornerRadius = 6;
-        //            self.dayLabel.layer.backgroundColor = self.markColor.CGColor;
-        //        }
-        //        else  {
-        //            self.dayLabel.layer.cornerRadius = 0;
-        //            self.dayLabel.layer.backgroundColor = [UIColor clearColor].CGColor;
-        //        }
     }
     
 //    self.dotLayer.hidden = !(self.accessoryTypes & MGCDayColumnCellAccessoryDot) || self.headerHeight == 0;

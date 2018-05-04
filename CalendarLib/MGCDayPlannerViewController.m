@@ -82,6 +82,9 @@
     [headerView.layer insertSublayer:backgroundLayer atIndex:0];
     [view insertSubview:headerView belowSubview:dayPlannerView];
     
+    _currentMonthLabel = [[UILabel alloc] init];
+    [view insertSubview:_currentMonthLabel aboveSubview:headerView];
+    
     [super setView:view];
     
     [headerView setTranslatesAutoresizingMaskIntoConstraints:false];
@@ -89,6 +92,17 @@
     [[headerView.leftAnchor constraintEqualToAnchor:self.view.leftAnchor constant:0] setActive:true];
     [[headerView.rightAnchor constraintEqualToAnchor:self.view.rightAnchor constant:0] setActive:true];
     [[headerView.heightAnchor constraintEqualToConstant:100] setActive:true];
+    
+    NSDateFormatter *dateFormatter = [NSDateFormatter new];
+    dateFormatter.dateFormat = self.formateDate ?: @"dd MMM YYYY, EEEE";
+    NSString *sDay = [dateFormatter stringFromDate:[NSDate date]];
+    _currentMonthLabel.text = [sDay uppercaseString];
+    _currentMonthLabel.font = [UIFont fontWithName:@"Montserrat" size:15] ?: [UIFont boldSystemFontOfSize:15];
+    _currentMonthLabel.textColor = UIColor.whiteColor;
+    [_currentMonthLabel setTranslatesAutoresizingMaskIntoConstraints:NO];
+    [[_currentMonthLabel.topAnchor constraintEqualToAnchor:self.view.layoutMarginsGuide.topAnchor constant:8] setActive:YES];
+    [[_currentMonthLabel.leftAnchor constraintEqualToAnchor:self.view.leftAnchor constant:58] setActive:YES];
+    [[_currentMonthLabel.rightAnchor constraintEqualToAnchor:self.view.rightAnchor constant:10] setActive:YES];
     
     [dayPlannerView setTranslatesAutoresizingMaskIntoConstraints:false];
     [[dayPlannerView.topAnchor constraintEqualToAnchor:self.view.layoutMarginsGuide.topAnchor constant:30] setActive:true];

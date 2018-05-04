@@ -44,6 +44,16 @@
 /*! Returns the calendar header view managed by the controller object. */
 @property (nonatomic) MGCCalendarHeaderView *headerView;
 
+/*
+ *  Label show current month
+ */
+@property (nonatomic) UILabel *currentMonthLabel;
+
+/*
+ *  Format Current Date
+ */
+@property (nonatomic) NSString *formateDate;
+
 @property (nonatomic, assign) BOOL showsWeekHeaderView;
 
 @end

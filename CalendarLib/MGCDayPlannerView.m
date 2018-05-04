@@ -56,6 +56,17 @@ typedef enum: NSUInteger
 	ScrollDirectionVertical = (ScrollDirectionUp | ScrollDirectionDown)
 } ScrollDirection;
 
+typedef NS_ENUM(NSUInteger, WeekDateType)
+{
+    kSun = 1,
+    kMon = 2,
+    kTue = 3,
+    kWed = 4,
+    kThu = 5,
+    kFri = 6,
+    kSat = 7
+};
+
 
 // collection views cell identifiers
 static NSString* const EventCellReuseIdentifier = @"EventCellReuseIdentifier";
@@ -485,8 +496,18 @@ static const CGFloat kMaxHourSlotHeight = 150.;
 - (NSDate*)startDate
 {
 	if (_startDate == nil) {
-		_startDate = [self.calendar mgc_startOfDayForDate:[NSDate date]];
-		
+        NSDate *currentDate = [NSDate date];
+        NSUInteger weekDay = [self.calendar components:NSCalendarUnitWeekday fromDate:currentDate].weekday;
+        if (weekDay != kMon) {
+            if (weekDay == kSun) {
+                weekDay = kSat + 1;
+            }
+            NSTimeInterval todayTimeInterval = [currentDate timeIntervalSince1970];
+            todayTimeInterval = todayTimeInterval - 60*60*24*(weekDay - kMon);
+            currentDate = [NSDate dateWithTimeIntervalSince1970:todayTimeInterval];
+            //currentDate = [currentDate addTimeInterval:60*60*24*(-(weekDay - kMon))];
+        }
+		_startDate = [self.calendar mgc_startOfDayForDate:currentDate];
 		if (self.dateRange && ![self.dateRange containsDate:_startDate]) {
 			_startDate = self.dateRange.start;
 		}
@@ -561,6 +582,7 @@ static const CGFloat kMaxHourSlotHeight = 150.;
 {
 	NSDateComponents *comp = [NSDateComponents new];
 	comp.day = dayOffset;
+    NSLog(@"Hoang log -- startDay: %@", self.startDate);
 	return [self.calendar dateByAddingComponents:comp toDate:self.startDate options:0];
 }
 
@@ -1818,10 +1840,9 @@ static const CGFloat kMaxHourSlotHeight = 150.;
     dayCell.dotColor = self.eventIndicatorDotColor;
 
     NSDate *date = [self dateFromDayOffset:indexPath.section];
-    NSLog(@"Hoang log1 --- %@ - %d - %d", date, indexPath.row, indexPath.section);
     
     NSUInteger weekDay = [self.calendar components:NSCalendarUnitWeekday fromDate:date].weekday;
-    NSUInteger accessoryTypes = weekDay == self.calendar.firstWeekday ? MGCDayColumnCellAccessorySeparator : MGCDayColumnCellAccessoryBorder;
+    NSUInteger accessoryTypes = MGCDayColumnCellAccessoryBorder;
     
     NSAttributedString *attrStr = nil;
     if ([self.delegate respondsToSelector:@selector(dayPlannerView:attributedStringForDayHeaderAtDate:)]) {
@@ -1837,8 +1858,6 @@ static const CGFloat kMaxHourSlotHeight = 150.;
         if (dateFormatter == nil) {
             dateFormatter = [NSDateFormatter new];
         }
-        //Hoang change format time
-        //dateFormatter.dateFormat = self.dateFormat ?: @"d MMM\neeeee";
         dateFormatter.dateFormat = self.dateFormat ?: @"EEE";
         NSString *sDayOfWeek = [dateFormatter stringFromDate:date];
         dateFormatter.dateFormat = self.dateFormat ?: @"dd";
@@ -1847,17 +1866,12 @@ static const CGFloat kMaxHourSlotHeight = 150.;
         NSMutableParagraphStyle *para = [NSMutableParagraphStyle new];
         para.alignment = NSTextAlignmentCenter;
         
-        UIFont *font = [UIFont systemFontOfSize:15];
+        UIFont *font = [UIFont fontWithName:@"TUV Montserrat" size:15] ?: [UIFont boldSystemFontOfSize:15];
         dayCell.dotLayer.hidden = YES;
-        //Hoang change color test
         UIColor *color = UIColor.whiteColor;
-        //UIColor *color = [self.calendar isDateInWeekend:date] ? [UIColor lightGrayColor] : [UIColor blackColor];
         
         if ([self.calendar mgc_isDate:date sameDayAsDate:[NSDate date]]) {
-//            accessoryTypes |= MGCDayColumnCellAccessoryMark;
-//            dayCell.markColor = self.tintColor;
-//            color = [UIColor whiteColor];
-//            font = [UIFont boldSystemFontOfSize:14];
+            accessoryTypes |= MGCDayColumnCellAccessoryMark;
             dayCell.dotLayer.hidden = NO;
         }
         
@@ -1866,7 +1880,7 @@ static const CGFloat kMaxHourSlotHeight = 150.;
         dayCell.dayOfWeekLabel.text = sDayOfWeek;
         dayCell.dayOfWeekLabel.textAlignment = NSTextAlignmentCenter;
         dayCell.dayOfWeekLabel.textColor = UIColor.blackColor;
-        dayCell.dayOfWeekLabel.font = [UIFont systemFontOfSize:12];
+        dayCell.dayOfWeekLabel.font = [UIFont fontWithName:@"TUV Montserrat" size:12] ?: [UIFont boldSystemFontOfSize:12];
     }
     
     //Hoang disable set ActivityIndicator for cell
