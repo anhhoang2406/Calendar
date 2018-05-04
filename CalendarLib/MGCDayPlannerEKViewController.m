@@ -97,28 +97,29 @@ static NSString* const EventCellReuseIdentifier = @"EventCellReuseIdentifier";
     eventController.allowsEditing = YES;
     eventController.allowsCalendarPreview = YES;
     
-    UINavigationController *nc = nil;
-    if ([self.delegate respondsToSelector:@selector(dayPlannerEKViewController:navigationControllerForPresentingEventViewController:)]) {
-        nc = [self.delegate dayPlannerEKViewController:self navigationControllerForPresentingEventViewController:eventController];
-    }
-    
-    if (nc) {
-        [nc pushViewController:eventController animated:YES];
-    }
-    else {
-        nc = [[UINavigationController alloc]initWithRootViewController:eventController];
-        nc.modalPresentationStyle = UIModalPresentationPopover;
-        eventController.presentationController.delegate = self;
-        
-        [self showDetailViewController:nc sender:self];
-        
-        CGRect visibleRect = CGRectIntersection(self.dayPlannerView.bounds, [self.dayPlannerView convertRect:view.bounds fromView:view]);
-        UIPopoverPresentationController *popController = nc.popoverPresentationController;
-        popController.permittedArrowDirections = UIPopoverArrowDirectionLeft|UIPopoverArrowDirectionRight;
-        popController.delegate = self;
-        popController.sourceView = self.dayPlannerView;
-        popController.sourceRect = visibleRect;
-    }
+    //Hoang disable show create event default 
+//    UINavigationController *nc = nil;
+//    if ([self.delegate respondsToSelector:@selector(dayPlannerEKViewController:navigationControllerForPresentingEventViewController:)]) {
+//        nc = [self.delegate dayPlannerEKViewController:self navigationControllerForPresentingEventViewController:eventController];
+//    }
+//
+//    if (nc) {
+//        [nc pushViewController:eventController animated:YES];
+//    }
+//    else {
+//        nc = [[UINavigationController alloc]initWithRootViewController:eventController];
+//        nc.modalPresentationStyle = UIModalPresentationPopover;
+//        eventController.presentationController.delegate = self;
+//
+//        [self showDetailViewController:nc sender:self];
+//
+//        CGRect visibleRect = CGRectIntersection(self.dayPlannerView.bounds, [self.dayPlannerView convertRect:view.bounds fromView:view]);
+//        UIPopoverPresentationController *popController = nc.popoverPresentationController;
+//        popController.permittedArrowDirections = UIPopoverArrowDirectionLeft|UIPopoverArrowDirectionRight;
+//        popController.delegate = self;
+//        popController.sourceView = self.dayPlannerView;
+//        popController.sourceRect = visibleRect;
+//    }
 }
 
 - (void)showPopoverForNewEvent:(EKEvent*)ev

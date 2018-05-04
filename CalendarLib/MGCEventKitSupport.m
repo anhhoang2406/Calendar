@@ -185,12 +185,12 @@
     
     UIPopoverPresentationController *popController = self.parentViewController.popoverPresentationController;
     BOOL isPopoverPresented = popController && popController.arrowDirection != UIPopoverArrowDirectionUnknown;
-    
+    self.navigationController.navigationBarHidden = NO;
     // navigation bar is hidden by default when EKEventViewController is presented fullscreen
-    if (self.presentingViewController && !isPopoverPresented) {
-        self.navigationController.navigationBarHidden = NO;
-        // self.navigationController.toolbarHidden = YES;
-    }
+//    if (self.presentingViewController && !isPopoverPresented) {
+//        self.navigationController.navigationBarHidden = NO;
+//        // self.navigationController.toolbarHidden = YES;
+//    }
 }
 
 - (void)viewWillDisappear:(BOOL)animated

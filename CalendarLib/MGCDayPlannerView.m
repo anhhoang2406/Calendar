@@ -177,7 +177,7 @@ static const CGFloat kMaxHourSlotHeight = 150.;
 	_numberOfVisibleDays = 7;
 	_hourSlotHeight = 65.;
 	_hourRange = NSMakeRange(0, 24);
-	_timeColumnWidth = 60.;
+	_timeColumnWidth = 48.;
 	_dayHeaderHeight = 40.;
     _daySeparatorsColor = [UIColor lightGrayColor];
     _timeSeparatorsColor = [UIColor lightGrayColor];
@@ -1512,7 +1512,6 @@ static const CGFloat kMaxHourSlotHeight = 150.;
 - (void)reloadAllEvents
 {
 	//NSLog(@"reloadAllEvents");
-	
 	[self deselectEventWithDelegate:YES];
 	
 	[self.allDayEventsView reloadData];
@@ -1529,18 +1528,18 @@ static const CGFloat kMaxHourSlotHeight = 150.;
 
 - (void)refreshEventMarkForColumnAtDate:(NSDate*)date
 {
-	NSInteger section = [self dayOffsetFromDate:date];
-	NSIndexPath *path = [NSIndexPath indexPathForItem:0 inSection:section];
-	MGCDayColumnCell *cell = (MGCDayColumnCell*)[self.dayColumnsView cellForItemAtIndexPath:path];
-	if (cell) {
-		NSUInteger count = [self numberOfAllDayEventsAtDate:date] + [self numberOfTimedEventsAtDate:date];
-		if (count > 0) {
-			cell.accessoryTypes |= MGCDayColumnCellAccessoryDot;
-		}
-		else {
-			cell.accessoryTypes &= ~MGCDayColumnCellAccessoryDot;
-		}
-	}
+    NSInteger section = [self dayOffsetFromDate:date];
+    NSIndexPath *path = [NSIndexPath indexPathForItem:0 inSection:section];
+    MGCDayColumnCell *cell = (MGCDayColumnCell*)[self.dayColumnsView cellForItemAtIndexPath:path];
+    if (cell) {
+        NSUInteger count = [self numberOfAllDayEventsAtDate:date] + [self numberOfTimedEventsAtDate:date];
+        if (count > 0) {
+            cell.accessoryTypes |= MGCDayColumnCellAccessoryDot;
+        }
+        else {
+            cell.accessoryTypes &= ~MGCDayColumnCellAccessoryDot;
+        }
+    }
 }
 
 // public
@@ -1819,6 +1818,7 @@ static const CGFloat kMaxHourSlotHeight = 150.;
     dayCell.dotColor = self.eventIndicatorDotColor;
 
     NSDate *date = [self dateFromDayOffset:indexPath.section];
+    NSLog(@"Hoang log1 --- %@ - %d - %d", date, indexPath.row, indexPath.section);
     
     NSUInteger weekDay = [self.calendar components:NSCalendarUnitWeekday fromDate:date].weekday;
     NSUInteger accessoryTypes = weekDay == self.calendar.firstWeekday ? MGCDayColumnCellAccessorySeparator : MGCDayColumnCellAccessoryBorder;
@@ -1837,30 +1837,42 @@ static const CGFloat kMaxHourSlotHeight = 150.;
         if (dateFormatter == nil) {
             dateFormatter = [NSDateFormatter new];
         }
-        dateFormatter.dateFormat = self.dateFormat ?: @"d MMM\neeeee";
-
-        NSString *s = [dateFormatter stringFromDate:date];
+        //Hoang change format time
+        //dateFormatter.dateFormat = self.dateFormat ?: @"d MMM\neeeee";
+        dateFormatter.dateFormat = self.dateFormat ?: @"EEE";
+        NSString *sDayOfWeek = [dateFormatter stringFromDate:date];
+        dateFormatter.dateFormat = self.dateFormat ?: @"dd";
+        NSString *sDay = [dateFormatter stringFromDate:date];
         
         NSMutableParagraphStyle *para = [NSMutableParagraphStyle new];
         para.alignment = NSTextAlignmentCenter;
         
-        UIFont *font = [UIFont systemFontOfSize:14];
-        UIColor *color = [self.calendar isDateInWeekend:date] ? [UIColor lightGrayColor] : [UIColor blackColor];
+        UIFont *font = [UIFont systemFontOfSize:15];
+        dayCell.dotLayer.hidden = YES;
+        //Hoang change color test
+        UIColor *color = UIColor.whiteColor;
+        //UIColor *color = [self.calendar isDateInWeekend:date] ? [UIColor lightGrayColor] : [UIColor blackColor];
         
         if ([self.calendar mgc_isDate:date sameDayAsDate:[NSDate date]]) {
-            accessoryTypes |= MGCDayColumnCellAccessoryMark;
-            dayCell.markColor = self.tintColor;
-            color = [UIColor whiteColor];
-            font = [UIFont boldSystemFontOfSize:14];
+//            accessoryTypes |= MGCDayColumnCellAccessoryMark;
+//            dayCell.markColor = self.tintColor;
+//            color = [UIColor whiteColor];
+//            font = [UIFont boldSystemFontOfSize:14];
+            dayCell.dotLayer.hidden = NO;
         }
         
-        NSAttributedString *as = [[NSAttributedString alloc]initWithString:s attributes:@{ NSParagraphStyleAttributeName: para, NSFontAttributeName: font, NSForegroundColorAttributeName: color }];
+        NSAttributedString *as = [[NSAttributedString alloc]initWithString:sDay attributes:@{ NSParagraphStyleAttributeName: para, NSFontAttributeName: font, NSForegroundColorAttributeName: color }];
         dayCell.dayLabel.attributedText = as;
+        dayCell.dayOfWeekLabel.text = sDayOfWeek;
+        dayCell.dayOfWeekLabel.textAlignment = NSTextAlignmentCenter;
+        dayCell.dayOfWeekLabel.textColor = UIColor.blackColor;
+        dayCell.dayOfWeekLabel.font = [UIFont systemFontOfSize:12];
     }
     
-    if ([self.loadingDays containsObject:date]) {
-        [dayCell setActivityIndicatorVisible:YES];
-    }
+    //Hoang disable set ActivityIndicator for cell
+//    if ([self.loadingDays containsObject:date]) {
+//        [dayCell setActivityIndicatorVisible:YES];
+//    }
     
     NSUInteger count = [self numberOfAllDayEventsAtDate:date] + [self numberOfTimedEventsAtDate:date];
     if (count > 0) {
@@ -1907,33 +1919,51 @@ static const CGFloat kMaxHourSlotHeight = 150.;
 	return nil;
 }
 
+//Hoang edit collectionview cell
 - (UICollectionReusableView*)collectionView:(UICollectionView*)collectionView viewForSupplementaryElementOfKind:(NSString*)kind atIndexPath:(NSIndexPath*)indexPath
 {
-    if ([kind isEqualToString:DimmingViewKind]) {
-        UICollectionReusableView *view = [self.timedEventsView dequeueReusableSupplementaryViewOfKind:DimmingViewKind withReuseIdentifier:DimmingViewReuseIdentifier forIndexPath:indexPath];
-        view.backgroundColor = self.dimmingColor;
-        
-        return view;
-    }
-    ///// test
-    else if ([kind isEqualToString:MoreEventsViewKind]) {
-        UICollectionReusableView *view = [self.allDayEventsView dequeueReusableSupplementaryViewOfKind:MoreEventsViewKind withReuseIdentifier:MoreEventsViewReuseIdentifier forIndexPath:indexPath];
-        
-        view.autoresizesSubviews = YES;
-        
-        NSUInteger hiddenCount = [self.allDayEventsViewLayout numberOfHiddenEventsInSection:indexPath.section];
-        UILabel *label = [[UILabel alloc]initWithFrame:view.bounds];
-        label.text = [NSString stringWithFormat:NSLocalizedString(@"%d more...", nil), hiddenCount];
-        label.textColor = [UIColor blackColor];
-        label.font = [UIFont systemFontOfSize:11];
-        label.autoresizingMask = UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth;
-        
-        [view.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
-        [view addSubview:label];
-        
-        return view;
-    }
+    UICollectionReusableView *view = [self.allDayEventsView dequeueReusableSupplementaryViewOfKind:MoreEventsViewKind withReuseIdentifier:MoreEventsViewReuseIdentifier forIndexPath:indexPath];
+    
+    view.autoresizesSubviews = YES;
+    
+    NSUInteger hiddenCount = [self.allDayEventsViewLayout numberOfHiddenEventsInSection:indexPath.section];
+    UILabel *label = [[UILabel alloc]initWithFrame:view.bounds];
+    label.text = [NSString stringWithFormat:NSLocalizedString(@"%d more...", nil), hiddenCount];
+    label.textColor = [UIColor blackColor];
+    label.font = [UIFont systemFontOfSize:11];
+    label.autoresizingMask = UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth;
+    
+    [view.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
+    [view addSubview:label];
+    
+    return view;
 }
+
+//- (UICollectionReusableView*)collectionView:(UICollectionView*)collectionView viewForSupplementaryElementOfKind:(NSString*)kind atIndexPath:(NSIndexPath*)indexPath
+//{
+//    if ([kind isEqualToString:DimmingViewKind]) {
+//        UICollectionReusableView *view = [self.timedEventsView dequeueReusableSupplementaryViewOfKind:DimmingViewKind withReuseIdentifier:DimmingViewReuseIdentifier forIndexPath:indexPath];
+//        view.backgroundColor = self.dimmingColor;
+//
+//        return view;
+//    } else if ([kind isEqualToString:MoreEventsViewKind]) {
+//        UICollectionReusableView *view = [self.allDayEventsView dequeueReusableSupplementaryViewOfKind:MoreEventsViewKind withReuseIdentifier:MoreEventsViewReuseIdentifier forIndexPath:indexPath];
+//
+//        view.autoresizesSubviews = YES;
+//
+//        NSUInteger hiddenCount = [self.allDayEventsViewLayout numberOfHiddenEventsInSection:indexPath.section];
+//        UILabel *label = [[UILabel alloc]initWithFrame:view.bounds];
+//        label.text = [NSString stringWithFormat:NSLocalizedString(@"%d more...", nil), hiddenCount];
+//        label.textColor = [UIColor blackColor];
+//        label.font = [UIFont systemFontOfSize:11];
+//        label.autoresizingMask = UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth;
+//
+//        [view.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
+//        [view addSubview:label];
+//
+//        return view;
+//    }
+//}
 
 #pragma mark - MGCTimedEventsViewLayoutDelegate
 
@@ -2185,13 +2215,14 @@ static const CGFloat kMaxHourSlotHeight = 150.;
 	CGPoint contentOffset = self.controllingScrollView.contentOffset;
 	
 	if (self.controllingScrollView == self.allDayEventsView && self.scrollDirection & ScrollDirectionHorizontal) {
-		
+        NSLog(@"Hoang log -- 1111");
 		self.dayColumnsView.contentOffset = CGPointMake(contentOffset.x, 0);
 		self.timedEventsView.contentOffset = CGPointMake(contentOffset.x, self.timedEventsView.contentOffset.y);
 	}
 	else if (self.controllingScrollView == self.timedEventsView) {
 		
 		if (self.scrollDirection & ScrollDirectionHorizontal) {
+            NSLog(@"Hoang log -- 22222");
 			self.dayColumnsView.contentOffset = CGPointMake(contentOffset.x, 0);
 			self.allDayEventsView.contentOffset = CGPointMake(contentOffset.x, self.allDayEventsView.contentOffset.y);
 		}

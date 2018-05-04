@@ -43,28 +43,79 @@
 
 - (MGCDayPlannerView*)dayPlannerView
 {
-	return (MGCDayPlannerView*)self.view;
+    return (MGCDayPlannerView*)self.view.subviews.lastObject;
+}
+
+- (CAGradientLayer *)applyGradient:(NSArray*)colours {
+    
+    NSArray *gradientLocations = [NSArray arrayWithObjects:[NSNumber numberWithInt:0.0],[NSNumber numberWithInt:1.0], nil];
+    
+    CAGradientLayer *gradientLayer = [CAGradientLayer layer];
+    gradientLayer.colors = colours;
+    gradientLayer.locations = gradientLocations;
+    
+    return gradientLayer;
 }
 
 - (void)setDayPlannerView:(MGCDayPlannerView*)dayPlannerView
 {
-	[super setView:dayPlannerView];
-	
-	if (!dayPlannerView.dataSource)
-		dayPlannerView.dataSource = self;
-	
-	if (!dayPlannerView.delegate)
-		dayPlannerView.delegate = self;
+//    [super setView:dayPlannerView];
+//
+//    if (!dayPlannerView.dataSource)
+//        dayPlannerView.dataSource = self;
+//
+//    if (!dayPlannerView.delegate)
+//        dayPlannerView.delegate = self;
+    
+    //Hoang Change modle of View
+    UIView *view = [[UIView alloc] initWithFrame:(CGRectZero)];
+    view.autoresizingMask = UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth;
+    view.backgroundColor = UIColor.whiteColor;
+    [view addSubview:dayPlannerView];
+    
+    UIView *headerView = [[UIView alloc] initWithFrame:(CGRectMake(0, 0, UIScreen.mainScreen.bounds.size.width, 100))];
+    UIColor *topColor = [UIColor colorWithRed:38.0/255.0 green:201.0/255.0 blue:255.0/255.0 alpha:1];
+    UIColor *bottomColor = [UIColor colorWithRed:35.0/255.0 green:180.0/255.0 blue:228.0/255.0 alpha:1];
+    CAGradientLayer *backgroundLayer = [self applyGradient:[NSArray arrayWithObjects:(id)topColor.CGColor, (id)bottomColor.CGColor, nil]];
+    backgroundLayer.frame = headerView.frame;
+    headerView.backgroundColor = UIColor.grayColor;
+    [headerView.layer insertSublayer:backgroundLayer atIndex:0];
+    [view insertSubview:headerView belowSubview:dayPlannerView];
+    
+    [super setView:view];
+    
+    [headerView setTranslatesAutoresizingMaskIntoConstraints:false];
+    [[headerView.topAnchor constraintEqualToAnchor:self.view.layoutMarginsGuide.topAnchor constant:0] setActive:true];
+    [[headerView.leftAnchor constraintEqualToAnchor:self.view.leftAnchor constant:0] setActive:true];
+    [[headerView.rightAnchor constraintEqualToAnchor:self.view.rightAnchor constant:0] setActive:true];
+    [[headerView.heightAnchor constraintEqualToConstant:100] setActive:true];
+    
+    [dayPlannerView setTranslatesAutoresizingMaskIntoConstraints:false];
+    [[dayPlannerView.topAnchor constraintEqualToAnchor:self.view.layoutMarginsGuide.topAnchor constant:30] setActive:true];
+    [[dayPlannerView.leftAnchor constraintEqualToAnchor:self.view.leftAnchor constant:0] setActive:true];
+    [[dayPlannerView.rightAnchor constraintEqualToAnchor:self.view.rightAnchor constant:0] setActive:true];
+    [[dayPlannerView.bottomAnchor constraintEqualToAnchor:self.view.bottomAnchor constant:0] setActive:true];
+    
+    if (!dayPlannerView.dataSource)
+    dayPlannerView.dataSource = self;
+    
+    if (!dayPlannerView.delegate)
+    dayPlannerView.delegate = self;
 }
 
 #pragma mark - UIViewController
 
 - (void)loadView
 {
-	MGCDayPlannerView *dayPlannerView = [[MGCDayPlannerView alloc]initWithFrame:CGRectZero];
-	dayPlannerView.autoresizingMask = UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth;
-	self.dayPlannerView = dayPlannerView;
-    self.dayPlannerView.autoresizesSubviews = YES;
+    //Hoang edit loadview
+//    MGCDayPlannerView *dayPlannerView = [[MGCDayPlannerView alloc]initWithFrame:CGRectZero];
+//    dayPlannerView.autoresizingMask = UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth;
+//    self.dayPlannerView = dayPlannerView;
+//    self.dayPlannerView.autoresizesSubviews = YES;
+    
+    MGCDayPlannerView *dayPlannerView = [[MGCDayPlannerView alloc]initWithFrame:CGRectZero];
+    dayPlannerView.backgroundColor = UIColor.clearColor;
+    self.dayPlannerView = dayPlannerView;
 }
 
 - (void)viewDidLayoutSubviews{
@@ -72,7 +123,7 @@
     
     if (!self.headerView && self.showsWeekHeaderView) {
         self.dayPlannerView.numberOfVisibleDays = 1;
-        self.dayPlannerView.dayHeaderHeight = 90;
+        self.dayPlannerView.dayHeaderHeight = 70;
         self.dayPlannerView.visibleDays.start = [NSDate date];
         [self setupHeaderView];
     }
