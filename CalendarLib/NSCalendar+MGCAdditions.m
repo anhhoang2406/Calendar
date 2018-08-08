@@ -83,9 +83,9 @@
 {
 	NSDate *firstDay = nil;
 	[self rangeOfUnit:NSCalendarUnitWeekOfMonth startDate:&firstDay interval:NULL forDate:date];
-//    NSDateComponents* comps = [NSDateComponents new];
-//    comps.day = 1;
-//    NSDate *next = [self dateByAddingComponents:comps toDate:firstDay options:0];
+    NSDateComponents* comps = [NSDateComponents new];
+    comps.day = 1;
+    NSDate *next = [self dateByAddingComponents:comps toDate:firstDay options:0];
     return [self mgc_startOfDayForDate:firstDay];//next;
 }
 
