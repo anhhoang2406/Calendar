@@ -86,7 +86,7 @@
     NSDateComponents* comps = [NSDateComponents new];
     comps.day = 1;
     NSDate *next = [self dateByAddingComponents:comps toDate:firstDay options:0];
-    return [self mgc_startOfDayForDate:firstDay];//next;
+    return next;
 }
 
 - (NSDate*)mgc_nextStartOfWeekForDate:(NSDate*)date
