@@ -62,6 +62,11 @@ typedef NS_ENUM(NSUInteger, MGCDayPlannerCoveringType) {
     MGCDayPlannerCoveringTypeComplex = 1
 };
 
+typedef NS_ENUM(NSUInteger, MGCDayPlannerViewType) {
+    MGCDayPlannerViewTypeDaily= 0,
+    MGCDayPlannerViewTypeWeek = 1
+};
+
 
 /*!
  * You can use an instance of MGCDayPlannerView to display events as a schedule.
@@ -222,6 +227,8 @@ typedef NS_ENUM(NSUInteger, MGCDayPlannerCoveringType) {
 	@discussion The default duration is 1 hour.
  */
 @property (nonatomic) NSTimeInterval durationForNewTimedEvent;
+
+@property (nonatomic) MGCDayPlannerViewType viewType;
 
 /*!
 	@abstract	The object that acts as the delegate of the day planner view.

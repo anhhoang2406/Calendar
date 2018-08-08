@@ -64,6 +64,10 @@ static const CGFloat dotSize = 5;
         _dayLabel.adjustsFontSizeToFitWidth = YES;
         _dayLabel.minimumScaleFactor = .7;
         [_dayLabel sizeToFit];
+        _selectedView = [[UIView alloc] init];
+        _selectedView.backgroundColor = [UIColor colorWithRed:255.0/255.0 green:245.0/255.0 blue:93.0/255.0 alpha:1];
+        _selectedView.layer.cornerRadius = 5;
+        [self.contentView insertSubview:_selectedView belowSubview:_dayOfWeekLabel];
         CGRect frame = _dayLabel.frame;
         frame.origin.y = _dayOfWeekLabel.frame.size.height;
         [_dayLabel setFrame:frame];
@@ -123,8 +127,9 @@ static const CGFloat dotSize = 5;
     if (self.headerHeight != 0) {
         CGSize headerSize = CGSizeMake(self.contentView.bounds.size.width, self.headerHeight);
         CGSize labelSize = CGSizeMake(headerSize.width - 2*kSpace, headerSize.height - (2*dotSize + 2*kSpace));
-        self.dayOfWeekLabel.frame = (CGRect) { 2, 0, labelSize.width, 20 };
-        self.dayLabel.frame = (CGRect) { 2, 23, labelSize.width, 20 };
+        self.dayOfWeekLabel.frame = (CGRect) { 2, 12, labelSize.width, 20 };
+        self.dayLabel.frame = (CGRect) { 2, 29, labelSize.width, 20 };
+        self.selectedView.frame = (CGRect) { 2, 10, labelSize.width + 1, 40 };
         
         self.dotLayer.position = CGPointMake(self.contentView.center.x, headerSize.height - 1.2 * dotSize - kPaddingBottom);
         self.dotLayer.fillColor = self.dotColor.CGColor;
@@ -132,7 +137,7 @@ static const CGFloat dotSize = 5;
     }
     
 //    self.dotLayer.hidden = !(self.accessoryTypes & MGCDayColumnCellAccessoryDot) || self.headerHeight == 0;
-    self.dayLabel.hidden = (self.headerHeight == 0);
+    //self.dayLabel.hidden = (self.headerHeight == 0);
     
     // border
     CGRect borderFrame = CGRectZero;

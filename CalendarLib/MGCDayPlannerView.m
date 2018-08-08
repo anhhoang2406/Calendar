@@ -185,7 +185,7 @@ static const CGFloat kMaxHourSlotHeight = 150.;
 
 - (void)setup
 {
-	_numberOfVisibleDays = 7;
+    _numberOfVisibleDays = 7;
 	_hourSlotHeight = 65.;
 	_hourRange = NSMakeRange(0, 24);
 	_timeColumnWidth = 48.;
@@ -496,21 +496,30 @@ static const CGFloat kMaxHourSlotHeight = 150.;
 - (NSDate*)startDate
 {
 	if (_startDate == nil) {
-        NSDate *currentDate = [NSDate date];
-        NSUInteger weekDay = [self.calendar components:NSCalendarUnitWeekday fromDate:currentDate].weekday;
-        if (weekDay != kMon) {
-            if (weekDay == kSun) {
-                weekDay = kSat + 1;
-            }
-            NSTimeInterval todayTimeInterval = [currentDate timeIntervalSince1970];
-            todayTimeInterval = todayTimeInterval - 60*60*24*(weekDay - kMon);
-            currentDate = [NSDate dateWithTimeIntervalSince1970:todayTimeInterval];
-            //currentDate = [currentDate addTimeInterval:60*60*24*(-(weekDay - kMon))];
+        if (_viewType == MGCDayPlannerViewTypeDaily) {
+            _numberOfVisibleDays = 1;
+        } else {
+            _numberOfVisibleDays = 7;
         }
-		_startDate = [self.calendar mgc_startOfDayForDate:currentDate];
-		if (self.dateRange && ![self.dateRange containsDate:_startDate]) {
-			_startDate = self.dateRange.start;
-		}
+        NSDate *currentDate = [NSDate date];
+        if (_viewType == MGCDayPlannerViewTypeDaily) {
+            _startDate = [self.calendar mgc_startOfDayForDate:currentDate];
+        } else {
+            NSUInteger weekDay = [self.calendar components:NSCalendarUnitWeekday fromDate:currentDate].weekday;
+            if (weekDay != kMon) {
+                if (weekDay == kSun) {
+                    weekDay = kSat + 1;
+                }
+                NSTimeInterval todayTimeInterval = [currentDate timeIntervalSince1970];
+                todayTimeInterval = todayTimeInterval - 60*60*24*(weekDay - kMon);
+                currentDate = [NSDate dateWithTimeIntervalSince1970:todayTimeInterval];
+                //currentDate = [currentDate addTimeInterval:60*60*24*(-(weekDay - kMon))];
+            }
+            _startDate = [self.calendar mgc_startOfDayForDate:currentDate];
+            if (self.dateRange && ![self.dateRange containsDate:_startDate]) {
+                _startDate = self.dateRange.start;
+            }
+        }
 	}
 	return _startDate;
 }
@@ -1768,6 +1777,11 @@ static const CGFloat kMaxHourSlotHeight = 150.;
 
 - (NSInteger)numberOfSectionsInCollectionView:(UICollectionView*)collectionView
 {
+//    if (_viewType == MGCDayPlannerViewTypeDaily) {
+//        _numberOfVisibleDays = 1;
+//    } else {
+//        _numberOfVisibleDays = 7;
+//    }
 	return self.numberOfLoadedDays;
 }
 
@@ -1860,7 +1874,7 @@ static const CGFloat kMaxHourSlotHeight = 150.;
         }
         dateFormatter.dateFormat = self.dateFormat ?: @"EEE";
         NSString *sDayOfWeek = [dateFormatter stringFromDate:date];
-        dateFormatter.dateFormat = self.dateFormat ?: @"dd";
+        dateFormatter.dateFormat = self.dateFormat ?: @"d/M";
         NSString *sDay = [dateFormatter stringFromDate:date];
         
         NSMutableParagraphStyle *para = [NSMutableParagraphStyle new];
@@ -1868,25 +1882,24 @@ static const CGFloat kMaxHourSlotHeight = 150.;
         
         UIFont *font = [UIFont fontWithName:@"TUV Montserrat" size:15] ?: [UIFont boldSystemFontOfSize:15];
         dayCell.dotLayer.hidden = YES;
+        dayCell.selectedView.hidden = YES;
         UIColor *color = UIColor.whiteColor;
+        UIColor *colorDayOfWeek = UIColor.whiteColor;
         
         if ([self.calendar mgc_isDate:date sameDayAsDate:[NSDate date]]) {
             accessoryTypes |= MGCDayColumnCellAccessoryMark;
-            dayCell.dotLayer.hidden = NO;
+            dayCell.selectedView.hidden = NO;
+            colorDayOfWeek = [UIColor colorWithRed:38.0/255.0 green:201.0/255.0 blue:255.0/255.0 alpha:1];
+            color = [UIColor colorWithRed:38.0/255.0 green:201.0/255.0 blue:255.0/255.0 alpha:1];
         }
         
         NSAttributedString *as = [[NSAttributedString alloc]initWithString:sDay attributes:@{ NSParagraphStyleAttributeName: para, NSFontAttributeName: font, NSForegroundColorAttributeName: color }];
         dayCell.dayLabel.attributedText = as;
         dayCell.dayOfWeekLabel.text = sDayOfWeek;
         dayCell.dayOfWeekLabel.textAlignment = NSTextAlignmentCenter;
-        dayCell.dayOfWeekLabel.textColor = UIColor.blackColor;
+        dayCell.dayOfWeekLabel.textColor = colorDayOfWeek;
         dayCell.dayOfWeekLabel.font = [UIFont fontWithName:@"TUV Montserrat" size:12] ?: [UIFont boldSystemFontOfSize:12];
     }
-    
-    //Hoang disable set ActivityIndicator for cell
-//    if ([self.loadingDays containsObject:date]) {
-//        [dayCell setActivityIndicatorVisible:YES];
-//    }
     
     NSUInteger count = [self numberOfAllDayEventsAtDate:date] + [self numberOfTimedEventsAtDate:date];
     if (count > 0) {
@@ -1894,6 +1907,13 @@ static const CGFloat kMaxHourSlotHeight = 150.;
     }
     
     dayCell.accessoryTypes = accessoryTypes;
+    
+    if (_viewType == MGCDayPlannerViewTypeDaily) {
+        [dayCell.dayLabel setHidden:YES];
+        [dayCell.dayOfWeekLabel setHidden:YES];
+        [dayCell.selectedView setHidden:YES];
+    }
+    
     return dayCell;
 }
 

@@ -32,7 +32,6 @@
 #import "MGCDayPlannerView.h"
 @class MGCCalendarHeaderView;
 
-
 /*! 
  *  The MGCDayPlannerViewController class creates a controller object that manages a day planner view.
  */
@@ -56,4 +55,7 @@
 
 @property (nonatomic, assign) BOOL showsWeekHeaderView;
 
+@property (nonatomic, assign) BOOL isShowWeekOfDate;
+
+- (void) updateCurrentMonth:(MGCDayPlannerView *)view;
 @end

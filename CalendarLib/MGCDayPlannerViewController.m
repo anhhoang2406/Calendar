@@ -43,7 +43,12 @@
 
 - (MGCDayPlannerView*)dayPlannerView
 {
-    return (MGCDayPlannerView*)self.view.subviews.lastObject;
+    for (UIView *i in self.view.subviews){
+        if([i isKindOfClass:[MGCDayPlannerView class]]){
+            return i;
+        }
+    }
+    return [[MGCDayPlannerView alloc]initWithFrame:CGRectZero];;
 }
 
 - (CAGradientLayer *)applyGradient:(NSArray*)colours {
@@ -83,7 +88,17 @@
     [view insertSubview:headerView belowSubview:dayPlannerView];
     
     _currentMonthLabel = [[UILabel alloc] init];
-    [view insertSubview:_currentMonthLabel aboveSubview:headerView];
+    UIButton *nextButton = [[UIButton alloc] init];
+    UIButton *prevButton = [[UIButton alloc] init];
+    [nextButton setImage:[[UIImage imageNamed:@"arrow-next"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
+    [prevButton setImage:[[UIImage imageNamed:@"arrow-prev"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
+    nextButton.tintColor = UIColor.whiteColor;
+    prevButton.tintColor = UIColor.whiteColor;
+    [view insertSubview:_currentMonthLabel aboveSubview:dayPlannerView];
+    [view insertSubview:nextButton aboveSubview:dayPlannerView];
+    [view insertSubview:prevButton aboveSubview:dayPlannerView];
+    [nextButton addTarget:self action:@selector(actionPressNextPage) forControlEvents:UIControlEventTouchUpInside];
+    [prevButton addTarget:self action:@selector(actionPressPrevPage) forControlEvents:UIControlEventTouchUpInside];
     
     [super setView:view];
     
@@ -96,13 +111,23 @@
     NSDateFormatter *dateFormatter = [NSDateFormatter new];
     dateFormatter.dateFormat = self.formateDate ?: @"dd MMM YYYY, EEEE";
     NSString *sDay = [dateFormatter stringFromDate:[NSDate date]];
+    _currentMonthLabel.numberOfLines = 2;
+    _currentMonthLabel.textAlignment = NSTextAlignmentCenter;
     _currentMonthLabel.text = [sDay uppercaseString];
-    _currentMonthLabel.font = [UIFont fontWithName:@"Montserrat" size:15] ?: [UIFont boldSystemFontOfSize:15];
+    _currentMonthLabel.font = [UIFont fontWithName:@"Montserrat" size:20] ?: [UIFont boldSystemFontOfSize:20];
     _currentMonthLabel.textColor = UIColor.whiteColor;
     [_currentMonthLabel setTranslatesAutoresizingMaskIntoConstraints:NO];
-    [[_currentMonthLabel.topAnchor constraintEqualToAnchor:self.view.layoutMarginsGuide.topAnchor constant:8] setActive:YES];
-    [[_currentMonthLabel.leftAnchor constraintEqualToAnchor:self.view.leftAnchor constant:58] setActive:YES];
-    [[_currentMonthLabel.rightAnchor constraintEqualToAnchor:self.view.rightAnchor constant:10] setActive:YES];
+    [[_currentMonthLabel.topAnchor constraintEqualToAnchor:self.view.topAnchor constant:8] setActive:YES];
+    [[_currentMonthLabel.centerXAnchor constraintEqualToAnchor:self.view.centerXAnchor constant:0] setActive:YES];
+    [nextButton setTranslatesAutoresizingMaskIntoConstraints:NO];
+    [[nextButton.leftAnchor constraintEqualToAnchor:_currentMonthLabel.rightAnchor constant:15] setActive:YES];
+    [[nextButton.topAnchor constraintEqualToAnchor:_currentMonthLabel.topAnchor constant:0] setActive:YES];
+    [[nextButton.bottomAnchor constraintEqualToAnchor:_currentMonthLabel.bottomAnchor constant:0] setActive:YES];
+    [prevButton setTranslatesAutoresizingMaskIntoConstraints:NO];
+    [[prevButton.rightAnchor constraintEqualToAnchor:_currentMonthLabel.leftAnchor constant:-15] setActive:YES];
+    [[prevButton.topAnchor constraintEqualToAnchor:_currentMonthLabel.topAnchor constant:0] setActive:YES];
+    [[prevButton.bottomAnchor constraintEqualToAnchor:_currentMonthLabel.bottomAnchor constant:0] setActive:YES];
+    
     
     [dayPlannerView setTranslatesAutoresizingMaskIntoConstraints:false];
     [[dayPlannerView.topAnchor constraintEqualToAnchor:self.view.layoutMarginsGuide.topAnchor constant:30] setActive:true];
@@ -214,6 +239,78 @@
 - (void)dayPlannerView:(MGCDayPlannerView*)view didEndScrolling:(MGCDayPlannerScrollType)scrollType
 {
     [self.headerView selectDate:view.visibleDays.start];
+    [self updateCurrentMonth:view];
+}
+
+- (void)dayPlannerView:(MGCDayPlannerView *)view didScroll:(MGCDayPlannerScrollType)scrollType {
+    
+}
+
+- (void) updateCurrentMonth:(MGCDayPlannerView *)view {
+    static NSDateFormatter *dateFormatter = nil;
+    if (dateFormatter == nil) {
+        dateFormatter = [NSDateFormatter new];
+    }
+    NSDate *startDate = [[view visibleDays] start];
+    NSDateComponents* comps = [NSDateComponents new];
+    comps.day = 1;
+    NSDate *endDate = [[NSCalendar currentCalendar] dateByAddingComponents:comps toDate:[[view visibleDays] end] options:0];
+    if (_isShowWeekOfDate) {
+        dateFormatter.dateFormat = @"MMM";
+        NSString *strStartMonth = [dateFormatter stringFromDate:startDate];
+        NSString *strEndMonth = [dateFormatter stringFromDate:endDate];
+        dateFormatter.dateFormat = @"d";
+        NSString *strStartday = [dateFormatter stringFromDate:startDate];
+        NSString *strEndDay = [dateFormatter stringFromDate:endDate];
+        dateFormatter.dateFormat = @"YYYY";
+        NSString *strStartYear = [dateFormatter stringFromDate:startDate];
+        NSString *strEndYear = [dateFormatter stringFromDate:endDate];
+        NSString *lang = [[NSUserDefaults standardUserDefaults] objectForKey:@"AppleLanguages"];
+        NSLog(@"Hoang Language: %@", lang);
+        if ([strStartYear isEqualToString:strEndYear]) {
+            if ([strStartMonth isEqualToString:strEndMonth]) {
+                _currentMonthLabel.text = [NSString stringWithFormat:@"%@ %@ - %@, %@", strStartMonth, strStartday, strEndDay, strStartYear];
+            } else {
+                _currentMonthLabel.text = [NSString stringWithFormat:@"%@ %@ - %@ %@, %@", strStartMonth, strStartday, strEndMonth, strEndDay, strStartYear];
+            }
+        } else {
+            _currentMonthLabel.text = [NSString stringWithFormat:@"%@ %@ %@ - %@ %@ %@", strStartMonth, strStartday, strStartYear, strEndMonth, strEndDay, strStartYear, strEndYear];
+        }
+        
+    } else {
+        for (NSLayoutConstraint *cons in self.view.constraints) {
+            if (cons.firstAttribute == NSLayoutAttributeTop && cons.firstItem == _currentMonthLabel) {
+                cons.constant = 30;
+            }
+        }
+        dateFormatter.dateFormat = @"MMM d, YYYY";
+        NSString *strDate = [dateFormatter stringFromDate:startDate];
+        dateFormatter.dateFormat = @"EEEE";
+        NSString *strDayOfWeed = [dateFormatter stringFromDate:startDate];
+        NSString *str = [NSString stringWithFormat:@"%@\n%@", strDate, strDayOfWeed];
+        NSDictionary *attribs = @{
+                                  NSForegroundColorAttributeName: [UIColor colorWithRed:255.0/255.0 green:245.0/255.0 blue:93.0/255.0 alpha:1],
+                                  NSFontAttributeName: _currentMonthLabel.font
+                                  };
+        NSMutableAttributedString *attributedText =
+        [[NSMutableAttributedString alloc] initWithString:str
+                                               attributes:attribs];
+        NSRange dayOfWeekTextRange = [str rangeOfString:strDayOfWeed];
+        [attributedText setAttributes:@{NSForegroundColorAttributeName:UIColor.whiteColor,
+                                        NSFontAttributeName: ([UIFont fontWithName:@"TUV Montserrat" size:16] ?: [UIFont systemFontOfSize:16])
+                                        }
+                                range:dayOfWeekTextRange];
+        
+        _currentMonthLabel.attributedText = attributedText;
+    }
+}
+
+- (void) actionPressNextPage {
+    [[self dayPlannerView] pageForwardAnimated:YES date:nil];
+}
+
+- (void) actionPressPrevPage {
+    [[self dayPlannerView] pageBackwardsAnimated:YES date:nil];
 }
 
 @end
