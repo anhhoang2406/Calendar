@@ -49,7 +49,6 @@
 		[self.eventView removeFromSuperview];
 		[self.contentView addSubview:eventView];
 		[self setNeedsLayout];
-		
 		_eventView = eventView;
 		_eventView.visibleHeight = self.visibleHeight;
 	}

@@ -591,7 +591,6 @@ static const CGFloat kMaxHourSlotHeight = 150.;
 {
 	NSDateComponents *comp = [NSDateComponents new];
 	comp.day = dayOffset;
-    NSLog(@"Hoang log -- startDay: %@", self.startDate);
 	return [self.calendar dateByAddingComponents:comp toDate:self.startDate options:0];
 }
 
@@ -1922,7 +1921,6 @@ static const CGFloat kMaxHourSlotHeight = 150.;
 	NSDate *date = [self dateFromDayOffset:indexPath.section];
 	NSUInteger index = indexPath.item;
 	MGCEventView *cell = [self.dataSource dayPlannerView:self viewForEventOfType:type atIndex:index date:date];
-	
 	MGCEventCell *cvCell = nil;
 	if (type == MGCTimedEventType) {
 		cvCell = (MGCEventCell*)[self.timedEventsView dequeueReusableCellWithReuseIdentifier:EventCellReuseIdentifier forIndexPath:indexPath];
@@ -1935,7 +1933,6 @@ static const CGFloat kMaxHourSlotHeight = 150.;
 	if ([self.selectedCellIndexPath isEqual:indexPath] && self.selectedCellType == type) {
 		cvCell.selected = YES;
 	}
-		
 	return cvCell;
 }
 
@@ -2249,14 +2246,12 @@ static const CGFloat kMaxHourSlotHeight = 150.;
 	CGPoint contentOffset = self.controllingScrollView.contentOffset;
 	
 	if (self.controllingScrollView == self.allDayEventsView && self.scrollDirection & ScrollDirectionHorizontal) {
-        NSLog(@"Hoang log -- 1111");
 		self.dayColumnsView.contentOffset = CGPointMake(contentOffset.x, 0);
 		self.timedEventsView.contentOffset = CGPointMake(contentOffset.x, self.timedEventsView.contentOffset.y);
 	}
 	else if (self.controllingScrollView == self.timedEventsView) {
 		
 		if (self.scrollDirection & ScrollDirectionHorizontal) {
-            NSLog(@"Hoang log -- 22222");
 			self.dayColumnsView.contentOffset = CGPointMake(contentOffset.x, 0);
 			self.allDayEventsView.contentOffset = CGPointMake(contentOffset.x, self.allDayEventsView.contentOffset.y);
 		}

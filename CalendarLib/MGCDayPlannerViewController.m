@@ -109,7 +109,7 @@
     [[headerView.heightAnchor constraintEqualToConstant:100] setActive:true];
     
     NSDateFormatter *dateFormatter = [NSDateFormatter new];
-    dateFormatter.dateFormat = self.formateDate ?: @"dd MMM YYYY, EEEE";
+    dateFormatter.dateFormat = self.formateDate ?: @"dd MMM yyyy, EEEE";
     NSString *sDay = [dateFormatter stringFromDate:[NSDate date]];
     _currentMonthLabel.numberOfLines = 2;
     _currentMonthLabel.textAlignment = NSTextAlignmentCenter;
@@ -262,11 +262,10 @@
         dateFormatter.dateFormat = @"d";
         NSString *strStartday = [dateFormatter stringFromDate:startDate];
         NSString *strEndDay = [dateFormatter stringFromDate:endDate];
-        dateFormatter.dateFormat = @"YYYY";
+        dateFormatter.dateFormat = @"yyyy";
         NSString *strStartYear = [dateFormatter stringFromDate:startDate];
         NSString *strEndYear = [dateFormatter stringFromDate:endDate];
         NSString *lang = [[NSUserDefaults standardUserDefaults] objectForKey:@"AppleLanguages"];
-        NSLog(@"Hoang Language: %@", lang);
         if ([strStartYear isEqualToString:strEndYear]) {
             if ([strStartMonth isEqualToString:strEndMonth]) {
                 _currentMonthLabel.text = [NSString stringWithFormat:@"%@ %@ - %@, %@", strStartMonth, strStartday, strEndDay, strStartYear];
@@ -283,7 +282,7 @@
                 cons.constant = 30;
             }
         }
-        dateFormatter.dateFormat = @"MMM d, YYYY";
+        dateFormatter.dateFormat = @"MMM d, yyyy";
         NSString *strDate = [dateFormatter stringFromDate:startDate];
         dateFormatter.dateFormat = @"EEEE";
         NSString *strDayOfWeed = [dateFormatter stringFromDate:startDate];

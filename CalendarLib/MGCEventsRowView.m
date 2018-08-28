@@ -182,7 +182,6 @@ static const CGFloat kCellSpacing = 2.;		// space around cells
 		{
 			MGCEventView *cell = [self.delegate eventsRowView:self cellForEventAtIndexPath:indexPath];
 			cell.frame = [self rectForCellWithRange:eventRange line:numLine];
-
 			if ([self.delegate respondsToSelector:@selector(eventsRowView:willDisplayCell:forEventAtIndexPath:)]) {
 				[self.delegate eventsRowView:self willDisplayCell:cell forEventAtIndexPath:indexPath];
 			}

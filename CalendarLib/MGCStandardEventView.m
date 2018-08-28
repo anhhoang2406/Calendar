@@ -48,7 +48,6 @@ static CGFloat kSpace = 2;
 {
     if (self = [super initWithFrame:frame]) {
 		self.contentMode = UIViewContentModeRedraw;
-		
 		_color = [UIColor blackColor];
 		_style = MGCStandardEventViewStylePlain|MGCStandardEventViewStyleSubtitle;
 		_font = [UIFont systemFontOfSize:[UIFont smallSystemFontSize]];
@@ -169,7 +168,6 @@ static CGFloat kSpace = 2;
 	if (boundingRect.size.height > drawRect.size.height) {
 		[self.attrString.mutableString replaceOccurrencesOfString:@"\n" withString:@"  " options:NSCaseInsensitiveSearch range:NSMakeRange(0, self.attrString.length)];
 	}
-
 	[self.attrString drawWithRect:drawRect options:NSStringDrawingTruncatesLastVisibleLine|NSStringDrawingUsesLineFragmentOrigin context:nil];
 }
 

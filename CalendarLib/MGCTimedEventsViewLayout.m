@@ -168,7 +168,7 @@ static NSString* const EventCellsKey = @"EventCellsKey";
 
 - (NSArray*)adjustLayoutForOverlappingCells:(NSArray*)attributes inSection:(NSUInteger)section
 {
-    const CGFloat kOverlapOffset = 4.;
+    const CGFloat kOverlapOffset = 10.;
     
     // sort layout attributes by frame y-position
     NSArray *adjustedAttributes = [attributes sortedArrayUsingComparator:^NSComparisonResult(MGCEventCellLayoutAttributes *att1, MGCEventCellLayoutAttributes *att2) {
@@ -212,9 +212,10 @@ static NSString* const EventCellsKey = @"EventCellsKey";
 
             // now, distribute elements in layout group
             CGFloat groupOffset = 0;
+            
+            NSUInteger slotNumber = 0;
             if (coveredLayoutAttributes.count > 0) {
                 BOOL lookForEmptySlot = YES;
-                NSUInteger slotNumber = 0;
                 CGFloat offset = 0;
                 
                 while (lookForEmptySlot) {
@@ -231,7 +232,7 @@ static NSString* const EventCellsKey = @"EventCellsKey";
                     
                     slotNumber += 1;
                 }
-                
+                NSLog(@"Hoang %d", slotNumber);
                 groupOffset += offset;
             }
             
