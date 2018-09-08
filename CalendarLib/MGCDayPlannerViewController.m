@@ -36,6 +36,7 @@
 @interface MGCDayPlannerViewController ()
 
 @property (nonatomic, copy) NSDate *firstVisibleDayForRotation;
+@property (nonatomic) UIView *headerViewBG;
 
 @end
 
@@ -62,6 +63,24 @@
     return gradientLayer;
 }
 
+- (void) updateHeaderView: (CGFloat)width {
+    if (_headerViewBG != NULL) {
+        for (CALayer* layer in _headerViewBG.layer.sublayers) {
+            if ([layer isKindOfClass:CAGradientLayer.class]) {
+                layer.frame = _headerViewBG.frame;
+                [self updateFocusIfNeeded];
+                return;
+            }
+        }
+        UIColor *topColor = [UIColor colorWithRed:38.0/255.0 green:201.0/255.0 blue:255.0/255.0 alpha:1];
+        UIColor *bottomColor = [UIColor colorWithRed:35.0/255.0 green:180.0/255.0 blue:228.0/255.0 alpha:1];
+        CAGradientLayer *backgroundLayer = [self applyGradient:[NSArray arrayWithObjects:(id)topColor.CGColor, (id)bottomColor.CGColor, nil]];
+        backgroundLayer.frame = _headerView.frame;
+        _headerViewBG.backgroundColor = UIColor.grayColor;
+        [_headerViewBG.layer insertSublayer:backgroundLayer atIndex:0];
+    }
+}
+
 - (void)setDayPlannerView:(MGCDayPlannerView*)dayPlannerView
 {
 //    [super setView:dayPlannerView];
@@ -78,14 +97,14 @@
     view.backgroundColor = UIColor.whiteColor;
     [view addSubview:dayPlannerView];
     
-    UIView *headerView = [[UIView alloc] initWithFrame:(CGRectMake(0, 0, UIScreen.mainScreen.bounds.size.width, 100))];
+    _headerViewBG = [[UIView alloc] initWithFrame:(CGRectMake(0, 0, UIScreen.mainScreen.bounds.size.width, 100))];
     UIColor *topColor = [UIColor colorWithRed:38.0/255.0 green:201.0/255.0 blue:255.0/255.0 alpha:1];
     UIColor *bottomColor = [UIColor colorWithRed:35.0/255.0 green:180.0/255.0 blue:228.0/255.0 alpha:1];
     CAGradientLayer *backgroundLayer = [self applyGradient:[NSArray arrayWithObjects:(id)topColor.CGColor, (id)bottomColor.CGColor, nil]];
-    backgroundLayer.frame = headerView.frame;
-    headerView.backgroundColor = UIColor.grayColor;
-    [headerView.layer insertSublayer:backgroundLayer atIndex:0];
-    [view insertSubview:headerView belowSubview:dayPlannerView];
+    backgroundLayer.frame = _headerViewBG.frame;
+    _headerViewBG.backgroundColor = UIColor.grayColor;
+    [_headerViewBG.layer insertSublayer:backgroundLayer atIndex:0];
+    [view insertSubview:_headerViewBG belowSubview:dayPlannerView];
     
     _currentMonthLabel = [[UILabel alloc] init];
     UIButton *nextButton = [[UIButton alloc] init];
@@ -102,14 +121,24 @@
     
     [super setView:view];
     
-    [headerView setTranslatesAutoresizingMaskIntoConstraints:false];
-    [[headerView.topAnchor constraintEqualToAnchor:self.view.layoutMarginsGuide.topAnchor constant:0] setActive:true];
-    [[headerView.leftAnchor constraintEqualToAnchor:self.view.leftAnchor constant:0] setActive:true];
-    [[headerView.rightAnchor constraintEqualToAnchor:self.view.rightAnchor constant:0] setActive:true];
-    [[headerView.heightAnchor constraintEqualToConstant:100] setActive:true];
+    [_headerViewBG setTranslatesAutoresizingMaskIntoConstraints:false];
+    [[_headerViewBG.topAnchor constraintEqualToAnchor:self.view.layoutMarginsGuide.topAnchor constant:0] setActive:true];
+    [[_headerViewBG.leftAnchor constraintEqualToAnchor:self.view.leftAnchor constant:0] setActive:true];
+    [[_headerViewBG.rightAnchor constraintEqualToAnchor:self.view.rightAnchor constant:0] setActive:true];
+    [[_headerViewBG.heightAnchor constraintEqualToConstant:100] setActive:true];
     
     NSDateFormatter *dateFormatter = [NSDateFormatter new];
-    dateFormatter.dateFormat = self.formateDate ?: @"dd MMM yyyy, EEEE";
+    NSArray *arrLang = [[NSUserDefaults standardUserDefaults] objectForKey:@"AppleLanguages"];
+    NSString *lang = @"";
+    if (arrLang.firstObject != nil) {
+        lang = arrLang.firstObject;
+    }
+    if ([lang isEqualToString:@"ja"]) {
+        dateFormatter.dateFormat = self.formateDate ?: @"yyyy年MM月d日";
+    } else {
+        dateFormatter.dateFormat = self.formateDate ?: @"dd MMM yyyy, EEEE";
+    }
+    
     NSString *sDay = [dateFormatter stringFromDate:[NSDate date]];
     _currentMonthLabel.numberOfLines = 2;
     _currentMonthLabel.textAlignment = NSTextAlignmentCenter;
@@ -254,9 +283,19 @@
     NSDate *startDate = [[view visibleDays] start];
     NSDateComponents* comps = [NSDateComponents new];
     comps.day = 1;
-    NSDate *endDate = [[NSCalendar currentCalendar] dateByAddingComponents:comps toDate:[[view visibleDays] end] options:0];
+    NSDate *endDate = [startDate dateByAddingTimeInterval:6*24*60*60];
+    
+    NSArray *arrLang = [[NSUserDefaults standardUserDefaults] objectForKey:@"AppleLanguages"];
+    NSString *lang = @"";
+    if (arrLang.firstObject != nil) {
+        lang = arrLang.firstObject;
+    }
     if (_isShowWeekOfDate) {
-        dateFormatter.dateFormat = @"MMM";
+        if ([lang isEqualToString:@"ja"]) {
+            dateFormatter.dateFormat = @"MM";
+        } else {
+            dateFormatter.dateFormat = @"MMM";
+        }
         NSString *strStartMonth = [dateFormatter stringFromDate:startDate];
         NSString *strEndMonth = [dateFormatter stringFromDate:endDate];
         dateFormatter.dateFormat = @"d";
@@ -265,15 +304,27 @@
         dateFormatter.dateFormat = @"yyyy";
         NSString *strStartYear = [dateFormatter stringFromDate:startDate];
         NSString *strEndYear = [dateFormatter stringFromDate:endDate];
-        NSString *lang = [[NSUserDefaults standardUserDefaults] objectForKey:@"AppleLanguages"];
+        
         if ([strStartYear isEqualToString:strEndYear]) {
             if ([strStartMonth isEqualToString:strEndMonth]) {
-                _currentMonthLabel.text = [NSString stringWithFormat:@"%@ %@ - %@, %@", strStartMonth, strStartday, strEndDay, strStartYear];
+                if ([lang isEqualToString:@"ja"]) {
+                    _currentMonthLabel.text = [NSString stringWithFormat:@"%@年%@月%@日～%@日", strStartYear, strStartMonth, strStartday, strEndDay];
+                } else {
+                    _currentMonthLabel.text = [NSString stringWithFormat:@"%@ %@ - %@, %@", strStartMonth, strStartday, strEndDay, strStartYear];
+                }
             } else {
-                _currentMonthLabel.text = [NSString stringWithFormat:@"%@ %@ - %@ %@, %@", strStartMonth, strStartday, strEndMonth, strEndDay, strStartYear];
+                if ([lang isEqualToString:@"ja"]) {
+                    _currentMonthLabel.text = [NSString stringWithFormat:@"%@年%@月%@日～%@月%@日", strStartYear, strStartMonth, strStartday, strEndMonth, strEndDay];
+                } else {
+                    _currentMonthLabel.text = [NSString stringWithFormat:@"%@ %@ - %@ %@, %@", strStartMonth, strStartday, strEndMonth, strEndDay, strStartYear];
+                }
             }
         } else {
-            _currentMonthLabel.text = [NSString stringWithFormat:@"%@ %@ %@ - %@ %@ %@", strStartMonth, strStartday, strStartYear, strEndMonth, strEndDay, strStartYear, strEndYear];
+            if ([lang isEqualToString:@"ja"]) {
+                _currentMonthLabel.text = [NSString stringWithFormat:@"%@年%@月%@日～%@年%@月%@日", strStartYear, strStartMonth, strStartday, strEndYear, strEndMonth, strEndDay];
+            } else {
+                _currentMonthLabel.text = [NSString stringWithFormat:@"%@ %@ %@ - %@ %@ %@", strStartYear, strStartMonth, strStartday, strEndYear, strEndMonth, strEndDay];
+            }
         }
         
     } else {
@@ -282,7 +333,11 @@
                 cons.constant = 30;
             }
         }
-        dateFormatter.dateFormat = @"MMM d, yyyy";
+        if ([lang isEqualToString:@"ja"]) {
+            dateFormatter.dateFormat = @"yyyy年MM月d日";
+        } else {
+            dateFormatter.dateFormat = @"MMM d, yyyy";
+        }
         NSString *strDate = [dateFormatter stringFromDate:startDate];
         dateFormatter.dateFormat = @"EEEE";
         NSString *strDayOfWeed = [dateFormatter stringFromDate:startDate];

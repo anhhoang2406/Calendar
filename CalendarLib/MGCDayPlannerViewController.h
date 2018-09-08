@@ -58,4 +58,5 @@
 @property (nonatomic, assign) BOOL isShowWeekOfDate;
 
 - (void) updateCurrentMonth:(MGCDayPlannerView *)view;
+- (void) updateHeaderView: (CGFloat)width;
 @end

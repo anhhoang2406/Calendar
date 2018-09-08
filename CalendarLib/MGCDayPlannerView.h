@@ -90,6 +90,8 @@ typedef NS_ENUM(NSUInteger, MGCDayPlannerViewType) {
 */
 @property (nonatomic) NSCalendar *calendar;
 
+@property (nonatomic) BOOL isLoadFinishView;
+
 /*!
 	@abstract	Returns the number of days the view shows at once, i.e the number of columns displayed.
 	@discussion The default value is 7.
@@ -521,6 +523,7 @@ typedef NS_ENUM(NSUInteger, MGCDayPlannerViewType) {
 
 @optional
 
+- (BOOL)dayPlannerView:(MGCDayPlannerView*)view isJapanEventOfType:(MGCEventType)type;
 /*!
 	@abstract	Asks the data source if the specified event can be moved around. If the method returns YES, the 
 				event view can be dragged and dropped to a different date / time.

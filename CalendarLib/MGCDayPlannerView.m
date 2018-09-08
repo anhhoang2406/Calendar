@@ -164,6 +164,7 @@ static const CGFloat kMaxHourSlotHeight = 150.;
 @property (copy, nonatomic) dispatch_block_t scrollViewAnimationCompletionBlock;
 
 @property (nonatomic) OSCache *dimmedTimeRangesCache;          // cache for dimmed time ranges (indexed by date)
+@property (nonatomic) CGFloat currentYContentTime;
 
 @end
 
@@ -185,6 +186,8 @@ static const CGFloat kMaxHourSlotHeight = 150.;
 
 - (void)setup
 {
+    _currentYContentTime = 0;
+    _isLoadFinishView = false;
     _numberOfVisibleDays = 7;
 	_hourSlotHeight = 65.;
 	_hourRange = NSMakeRange(0, 24);
@@ -767,7 +770,15 @@ static const CGFloat kMaxHourSlotHeight = 150.;
 	
 	if (options == MGCDayPlannerScrollTime) {
 		self.userInteractionEnabled = NO;
-		offset.y = y;
+        if (y - [self bounds].size.height/2 < 0) {
+            offset.y = 0;
+        } else {
+            if (y > (self.timedEventsView.contentSize.height - [self bounds].size.height)) {
+                offset.y = y;
+            } else {
+                offset.y = y - [self bounds].size.height/2;
+            }
+        }
 		[self setTimedEventsViewContentOffset:offset animated:animated completion:completion];
 	}
 	else if (options == MGCDayPlannerScrollDate) {
@@ -832,6 +843,9 @@ static const CGFloat kMaxHourSlotHeight = 150.;
 	NSDate *nextDate;
 	if (self.numberOfVisibleDays >= 7) {
 		nextDate = [self.calendar mgc_nextStartOfWeekForDate:date];
+        NSDateComponents* comps = [NSDateComponents new];
+        comps.day = -1;
+        nextDate = [self.calendar dateByAddingComponents:comps toDate:nextDate options:0];
 	}
 	else {
 		NSDateComponents *comps = [NSDateComponents new];
@@ -855,11 +869,9 @@ static const CGFloat kMaxHourSlotHeight = 150.;
 	NSDate *prevDate;
 	if (self.numberOfVisibleDays >= 7) {
 		prevDate = [self.calendar mgc_startOfWeekForDate:date];
-		if ([prevDate isEqualToDate:date]) {
-			NSDateComponents* comps = [NSDateComponents new];
-			comps.day = -7;
-			prevDate = [self.calendar dateByAddingComponents:comps toDate:date options:0];
-		}
+        NSDateComponents* comps = [NSDateComponents new];
+        comps.day = -8;
+        prevDate = [self.calendar dateByAddingComponents:comps toDate:prevDate options:0];
 	}
 	else {
 		NSDateComponents *comps = [NSDateComponents new];
@@ -893,9 +905,9 @@ static const CGFloat kMaxHourSlotHeight = 150.;
 		
 		[_timedEventsView registerClass:MGCEventCell.class forCellWithReuseIdentifier:EventCellReuseIdentifier];
         [_timedEventsView registerClass:UICollectionReusableView.class forSupplementaryViewOfKind:DimmingViewKind withReuseIdentifier:DimmingViewReuseIdentifier];
-		UILongPressGestureRecognizer *longPress = [UILongPressGestureRecognizer new];
-		[longPress addTarget:self action:@selector(handleLongPress:)];
-		[_timedEventsView addGestureRecognizer:longPress];
+		//UILongPressGestureRecognizer *longPress = [UILongPressGestureRecognizer new];
+		//[longPress addTarget:self action:@selector(handleLongPress:)];
+		//[_timedEventsView addGestureRecognizer:longPress];
 		
 		UITapGestureRecognizer *tap = [UITapGestureRecognizer new];
 		[tap addTarget:self action:@selector(handleTap:)];
@@ -1757,9 +1769,11 @@ static const CGFloat kMaxHourSlotHeight = 150.;
     self.timedEventsViewLayout.dayColumnSize = dayColumnSize;
     self.allDayEventsViewLayout.dayColumnWidth = dayColumnSize.width;
     self.allDayEventsViewLayout.eventCellHeight = self.allDayEventCellHeight;
-    
-	[self setupSubviews];
+    if (_isLoadFinishView == false) {
+        [self setupSubviews];
+    }
 	[self updateVisibleDaysRange];
+    _isLoadFinishView = true;
 }
 
 #pragma mark - MGCTimeRowsViewDelegate
@@ -2248,6 +2262,7 @@ static const CGFloat kMaxHourSlotHeight = 150.;
 	if (self.controllingScrollView == self.allDayEventsView && self.scrollDirection & ScrollDirectionHorizontal) {
 		self.dayColumnsView.contentOffset = CGPointMake(contentOffset.x, 0);
 		self.timedEventsView.contentOffset = CGPointMake(contentOffset.x, self.timedEventsView.contentOffset.y);
+        _currentYContentTime = self.timedEventsView.contentOffset.y;
 	}
 	else if (self.controllingScrollView == self.timedEventsView) {
 		
@@ -2257,6 +2272,7 @@ static const CGFloat kMaxHourSlotHeight = 150.;
 		}
 		else {
 			self.timeScrollView.contentOffset = CGPointMake(0, contentOffset.y);
+            _currentYContentTime = self.timedEventsView.contentOffset.y;
 		}
 	}
 }

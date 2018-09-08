@@ -232,7 +232,6 @@ static NSString* const EventCellsKey = @"EventCellsKey";
                     
                     slotNumber += 1;
                 }
-                NSLog(@"Hoang %d", slotNumber);
                 groupOffset += offset;
             }
             

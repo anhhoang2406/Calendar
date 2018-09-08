@@ -69,7 +69,7 @@
 	
 	[self.timer invalidate];
 	if (_showsCurrentTime) {
-		self.timer = [NSTimer scheduledTimerWithTimeInterval:60 target:self selector:@selector(timeChanged:) userInfo:nil repeats:YES];
+		self.timer = [NSTimer scheduledTimerWithTimeInterval:4 target:self selector:@selector(timeChanged:) userInfo:nil repeats:YES];
 	}
 	
 	[self setNeedsDisplay];
