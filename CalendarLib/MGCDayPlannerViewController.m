@@ -342,7 +342,21 @@
         dateFormatter.dateFormat = @"EEE";
         NSString *strDayOfWeed = [dateFormatter stringFromDate:startDate];
         if ([lang isEqualToString:@"ja"]) {
-            strDayOfWeed = NSLocalizedString([strDayOfWeed lowercaseString], nil);
+            if ([[strDayOfWeed lowercaseString] isEqualToString:@"mon"]) {
+                strDayOfWeed = @"月";
+            } else if ([[strDayOfWeed lowercaseString] isEqualToString:@"tue"]) {
+                strDayOfWeed = @"火";
+            } else if ([[strDayOfWeed lowercaseString] isEqualToString:@"wed"]) {
+                strDayOfWeed = @"水";
+            } else if ([[strDayOfWeed lowercaseString] isEqualToString:@"thu"]) {
+                strDayOfWeed = @"木";
+            } else if ([[strDayOfWeed lowercaseString] isEqualToString:@"fri"]) {
+                strDayOfWeed = @"金";
+            } else if ([[strDayOfWeed lowercaseString] isEqualToString:@"sat"]) {
+                strDayOfWeed = @"土";
+            } else {
+                strDayOfWeed = @"日";
+            }
         } else {
             dateFormatter.dateFormat = @"EEEE";
             strDayOfWeed = [dateFormatter stringFromDate:startDate];
