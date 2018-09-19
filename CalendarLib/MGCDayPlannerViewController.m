@@ -339,8 +339,14 @@
             dateFormatter.dateFormat = @"MMM d, yyyy";
         }
         NSString *strDate = [dateFormatter stringFromDate:startDate];
-        dateFormatter.dateFormat = @"EEEE";
+        dateFormatter.dateFormat = @"EEE";
         NSString *strDayOfWeed = [dateFormatter stringFromDate:startDate];
+        if ([lang isEqualToString:@"ja"]) {
+            strDayOfWeed = NSLocalizedString([strDayOfWeed lowercaseString], nil);
+        } else {
+            dateFormatter.dateFormat = @"EEEE";
+            strDayOfWeed = [dateFormatter stringFromDate:startDate];
+        }
         NSString *str = [NSString stringWithFormat:@"%@\n%@", strDate, strDayOfWeed];
         NSDictionary *attribs = @{
                                   NSForegroundColorAttributeName: [UIColor colorWithRed:255.0/255.0 green:245.0/255.0 blue:93.0/255.0 alpha:1],

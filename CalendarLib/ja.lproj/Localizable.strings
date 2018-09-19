@@ -29,28 +29,28 @@
 //
 
 
-"Warning" = "Attention";
+"Warning" = "Warning";
 
-"Access to the calendar was not authorized" = "L'accès de cette application au calendrier n'a pas été autorisée";
+"Access to the calendar was not authorized" = "Access to the calendar was not authorized";
 
-"This is a repeating event." = "Cet événement est récurrent.";
+"This is a repeating event." = "This is a repeating event.";
 
-"What do you want to modify?" = "Que souhaitez vous modifier ?";
+"What do you want to modify?" = "What do you want to modify?";
 
-"Cancel" = "Annuler";
+"Cancel" = "Cancel";
 
-"This event only" = "Seulement cet évènement";
+"This event only" = "This event only";
 
-"All future events" = "Tous les évènements à venir";
+"All future events" = "All future events";
 
-"New Event" = "Nouvel évènement";
+"New Event" = "New Event";
 
-"%lu more..." = "%lu de plus...";
+"%lu more..." = "%lu more...";
 
-"mon" = "Mon";
-"tue" = "Tue";
-"wed" = "Wed";
-"thu" = "Thu";
-"fri" = "Fri";
-"sat" = "Sat";
-"sun" = "Sun";
+"mon" = "月";
+"tue" = "火";
+"wed" = "水";
+"thu" = "木";
+"fri" = "金";
+"sat" = "土";
+"sun" = "日";

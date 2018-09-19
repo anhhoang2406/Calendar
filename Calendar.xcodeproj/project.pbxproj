@@ -52,6 +52,9 @@
 		072E5EFE1C338559007711A0 /* Constant.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Constant.h; sourceTree = "<group>"; };
 		1F0C1F1B722A7E607C88C0FE /* Pods-CalendarDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CalendarDemo.debug.xcconfig"; path = "Pods/Target Support Files/Pods-CalendarDemo/Pods-CalendarDemo.debug.xcconfig"; sourceTree = "<group>"; };
 		28486480EAA57CF147A3825F /* Pods.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		60CD8BE4215237630054C351 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Localizable.strings; sourceTree = "<group>"; };
+		60CD8BE5215237630054C351 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		60CD8BE6215237630054C351 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		720041B91879B2B600F3C497 /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		720DAE511C6269D900DF8AAA /* NSAttributedString+MGCAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSAttributedString+MGCAdditions.h"; sourceTree = "<group>"; };
 		720DAE521C6269D900DF8AAA /* NSAttributedString+MGCAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSAttributedString+MGCAdditions.m"; sourceTree = "<group>"; };
@@ -517,6 +520,7 @@
 				en,
 				fr,
 				Base,
+				ja,
 			);
 			mainGroup = 72B5D8E5180D73E0004ADB86;
 			productRefGroup = 72B5D8EF180D73E0004ADB86 /* Products */;
@@ -645,6 +649,7 @@
 			children = (
 				721CA1B31A9382990083F41A /* en */,
 				721CA1B51A9382A80083F41A /* fr */,
+				60CD8BE4215237630054C351 /* ja */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
@@ -654,6 +659,7 @@
 			children = (
 				72B5D8FB180D73E0004ADB86 /* en */,
 				726C2037182D6F66004AEE13 /* fr */,
+				60CD8BE5215237630054C351 /* ja */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -663,6 +669,7 @@
 			children = (
 				72B5D914180D73E0004ADB86 /* en */,
 				726C2038182D6F66004AEE13 /* fr */,
+				60CD8BE6215237630054C351 /* ja */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
