@@ -1887,7 +1887,7 @@ static const CGFloat kMaxHourSlotHeight = 150.;
         }
         dateFormatter.dateFormat = self.dateFormat ?: @"EEE";
         NSString *sDayOfWeek = [dateFormatter stringFromDate:date];
-        strDayOfWeed = NSLocalizedString([strDayOfWeed lowercaseString], nil);
+        sDayOfWeek = NSLocalizedString([strDayOfWeed lowercaseString], nil);
         dateFormatter.dateFormat = self.dateFormat ?: @"d/M";
         NSString *sDay = [dateFormatter stringFromDate:date];
         
