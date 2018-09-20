@@ -362,18 +362,22 @@
             strDayOfWeed = [dateFormatter stringFromDate:startDate];
         }
         NSString *str = [NSString stringWithFormat:@"%@\n%@", strDate, strDayOfWeed];
-        NSDictionary *attribs = @{
+        NSDictionary *attribs = @{NSForegroundColorAttributeName:UIColor.whiteColor,
+                                  NSFontAttributeName: ([UIFont fontWithName:@"TUV Montserrat" size:16] ?: [UIFont systemFontOfSize:16])
+                                  };
+                                @{
                                   NSForegroundColorAttributeName: [UIColor colorWithRed:255.0/255.0 green:245.0/255.0 blue:93.0/255.0 alpha:1],
                                   NSFontAttributeName: _currentMonthLabel.font
                                   };
         NSMutableAttributedString *attributedText =
         [[NSMutableAttributedString alloc] initWithString:str
                                                attributes:attribs];
-        NSRange dayOfWeekTextRange = [str rangeOfString:strDayOfWeed];
-        [attributedText setAttributes:@{NSForegroundColorAttributeName:UIColor.whiteColor,
-                                        NSFontAttributeName: ([UIFont fontWithName:@"TUV Montserrat" size:16] ?: [UIFont systemFontOfSize:16])
+        NSRange dayTextRange = [str rangeOfString:strDate];
+        [attributedText setAttributes:@{
+                                        NSForegroundColorAttributeName: [UIColor colorWithRed:255.0/255.0 green:245.0/255.0 blue:93.0/255.0 alpha:1],
+                                        NSFontAttributeName: _currentMonthLabel.font
                                         }
-                                range:dayOfWeekTextRange];
+                                range:dayTextRange];
         
         _currentMonthLabel.attributedText = attributedText;
     }
