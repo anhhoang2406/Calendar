@@ -1887,20 +1887,27 @@ static const CGFloat kMaxHourSlotHeight = 150.;
         }
         dateFormatter.dateFormat = self.dateFormat ?: @"EEE";
         NSString *sDayOfWeek = [dateFormatter stringFromDate:date];
-        if ([[sDayOfWeek lowercaseString] isEqualToString:@"mon"]) {
-            sDayOfWeek = @"月";
-        } else if ([[sDayOfWeek lowercaseString] isEqualToString:@"tue"]) {
-            sDayOfWeek = @"火";
-        } else if ([[sDayOfWeek lowercaseString] isEqualToString:@"wed"]) {
-            sDayOfWeek = @"水";
-        } else if ([[sDayOfWeek lowercaseString] isEqualToString:@"thu"]) {
-            sDayOfWeek = @"木";
-        } else if ([[sDayOfWeek lowercaseString] isEqualToString:@"fri"]) {
-            sDayOfWeek = @"金";
-        } else if ([[sDayOfWeek lowercaseString] isEqualToString:@"sat"]) {
-            sDayOfWeek = @"土";
-        } else {
-            sDayOfWeek = @"日";
+        NSArray *arrLang = [[NSUserDefaults standardUserDefaults] objectForKey:@"AppleLanguages"];
+        NSString *lang = @"";
+        if (arrLang.firstObject != nil) {
+            lang = arrLang.firstObject;
+        }
+        if ([lang isEqualToString:@"ja"]) {
+            if ([[sDayOfWeek lowercaseString] isEqualToString:@"mon"]) {
+                sDayOfWeek = @"月";
+            } else if ([[sDayOfWeek lowercaseString] isEqualToString:@"tue"]) {
+                sDayOfWeek = @"火";
+            } else if ([[sDayOfWeek lowercaseString] isEqualToString:@"wed"]) {
+                sDayOfWeek = @"水";
+            } else if ([[sDayOfWeek lowercaseString] isEqualToString:@"thu"]) {
+                sDayOfWeek = @"木";
+            } else if ([[sDayOfWeek lowercaseString] isEqualToString:@"fri"]) {
+                sDayOfWeek = @"金";
+            } else if ([[sDayOfWeek lowercaseString] isEqualToString:@"sat"]) {
+                sDayOfWeek = @"土";
+            } else if ([[sDayOfWeek lowercaseString] isEqualToString:@"sun"]) {
+                sDayOfWeek = @"日";
+            }
         }
         dateFormatter.dateFormat = self.dateFormat ?: @"d/M";
         NSString *sDay = [dateFormatter stringFromDate:date];

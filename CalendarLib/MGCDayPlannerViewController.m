@@ -354,7 +354,7 @@
                 strDayOfWeed = @"金";
             } else if ([[strDayOfWeed lowercaseString] isEqualToString:@"sat"]) {
                 strDayOfWeed = @"土";
-            } else {
+            } else if ([[strDayOfWeed lowercaseString] isEqualToString:@"sun"]) {
                 strDayOfWeed = @"日";
             }
         } else {
