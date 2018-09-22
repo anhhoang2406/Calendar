@@ -509,12 +509,12 @@ static const CGFloat kMaxHourSlotHeight = 150.;
             _startDate = [self.calendar mgc_startOfDayForDate:currentDate];
         } else {
             NSUInteger weekDay = [self.calendar components:NSCalendarUnitWeekday fromDate:currentDate].weekday;
-            if (weekDay != kMon) {
-                if (weekDay == kSun) {
-                    weekDay = kSat + 1;
-                }
+            if (weekDay != kSun) {
+//                if (weekDay == kSun) {
+//                    weekDay = kSat + 1;
+//                }
                 NSTimeInterval todayTimeInterval = [currentDate timeIntervalSince1970];
-                todayTimeInterval = todayTimeInterval - 60*60*24*(weekDay - kMon);
+                todayTimeInterval = todayTimeInterval - 60*60*24*(weekDay - kSun);
                 currentDate = [NSDate dateWithTimeIntervalSince1970:todayTimeInterval];
                 //currentDate = [currentDate addTimeInterval:60*60*24*(-(weekDay - kMon))];
             }
