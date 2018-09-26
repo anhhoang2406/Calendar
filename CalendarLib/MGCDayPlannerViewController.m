@@ -152,9 +152,11 @@
     [[nextButton.leftAnchor constraintEqualToAnchor:_currentMonthLabel.rightAnchor constant:15] setActive:YES];
     [[nextButton.topAnchor constraintEqualToAnchor:_currentMonthLabel.topAnchor constant:0] setActive:YES];
     [[nextButton.bottomAnchor constraintEqualToAnchor:_currentMonthLabel.bottomAnchor constant:0] setActive:YES];
+    [[nextButton.widthAnchor constraintEqualToConstant:30] setActive:YES];
     [prevButton setTranslatesAutoresizingMaskIntoConstraints:NO];
     [[prevButton.rightAnchor constraintEqualToAnchor:_currentMonthLabel.leftAnchor constant:-15] setActive:YES];
     [[prevButton.topAnchor constraintEqualToAnchor:_currentMonthLabel.topAnchor constant:0] setActive:YES];
+    [[prevButton.widthAnchor constraintEqualToConstant:30] setActive:YES];
     [[prevButton.bottomAnchor constraintEqualToAnchor:_currentMonthLabel.bottomAnchor constant:0] setActive:YES];
     
     

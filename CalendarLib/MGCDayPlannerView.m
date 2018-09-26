@@ -42,6 +42,7 @@
 #import "MGCTimeRowsView.h"
 #import "MGCAlignedGeometry.h"
 #import "OSCache.h"
+#import "Constant.h"
 
 
 // used to restrict scrolling to one direction / axis
@@ -1914,8 +1915,11 @@ static const CGFloat kMaxHourSlotHeight = 150.;
         
         NSMutableParagraphStyle *para = [NSMutableParagraphStyle new];
         para.alignment = NSTextAlignmentCenter;
-        
-        UIFont *font = [UIFont fontWithName:@"TUV Montserrat" size:15] ?: [UIFont boldSystemFontOfSize:15];
+        CGFloat size = 13;
+        if (isiPad) {
+            size = 15;
+        }
+        UIFont *font = [UIFont fontWithName:@"TUV Montserrat" size:size] ?: [UIFont boldSystemFontOfSize:size];
         dayCell.dotLayer.hidden = YES;
         dayCell.selectedView.hidden = YES;
         UIColor *color = UIColor.whiteColor;
