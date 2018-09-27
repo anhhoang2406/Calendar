@@ -2443,6 +2443,19 @@ static const CGFloat kMaxHourSlotHeight = 150.;
         NSInteger section = roundf(targetContentOffset->x / self.dayColumnSize.width);
         xOffset = section * self.dayColumnSize.width;
         self.scrollTargetDate = [self dateFromDayOffset:section];
+        NSCalendar *gregorian = [NSCalendar currentCalendar];
+        NSDateComponents *comps = [gregorian components:NSWeekdayCalendarUnit fromDate:self.scrollTargetDate];
+        int weekday = [comps weekday];
+        if (weekday < 4) {
+            self.scrollTargetDate = [self.scrollTargetDate dateByAddingTimeInterval:-(weekday - 1)*24*60*60];
+            section = [self dayOffsetFromDate:self.scrollTargetDate];
+            xOffset = [self xOffsetFromDayOffset:section];
+            //self.scrollTargetDate = [self dateFromDayOffset:(section - weekday - 1)];
+        } else {
+            xOffset = (section + (8 - weekday)) * self.dayColumnSize.width;
+            self.scrollTargetDate = [self.scrollTargetDate dateByAddingTimeInterval:(8 - weekday)*24*60*60];
+        }
+            
     }
     else if (self.pagingEnabled) {
         NSDate *date;
@@ -2450,6 +2463,18 @@ static const CGFloat kMaxHourSlotHeight = 150.;
         // scroll to next page
         if (velocity.x > 0) {
             date = [self nextDateForPagingAfterDate:self.visibleDays.start];
+//            NSCalendar *gregorian = [NSCalendar currentCalendar];
+//            NSDateComponents *comps = [gregorian components:NSWeekdayCalendarUnit fromDate:date];
+//            NSDateComponents *compsTargetDate = [gregorian components:NSWeekdayCalendarUnit fromDate:self.scrollTargetDate];
+//            int weekday = [comps weekday];
+//            int weekdayOfTargetDate = [compsTargetDate weekday];
+//            if (weekdayOfTargetDate + 6 > weekday) {
+//                date = [date dateByAddingTimeInterval:(7 - weekday)*24*60*60];
+//            } else {
+//                date = [date dateByAddingTimeInterval:-(weekday)*24*60*60];
+//            }
+            
+            //NSLog(@"hoang %d, %d, -- %@", weekday, weekdayOfTargetDate, date);
          }
         // scroll to previous page
         else {
