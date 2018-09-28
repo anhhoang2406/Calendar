@@ -92,6 +92,8 @@ typedef NS_ENUM(NSUInteger, MGCDayPlannerViewType) {
 
 @property (nonatomic) BOOL isLoadFinishView;
 
+@property (nonatomic) UIScrollView *controllingScrollView;        // the collection view which initiated scrolling - used for proper synchronization between the different collection views
+
 /*!
 	@abstract	Returns the number of days the view shows at once, i.e the number of columns displayed.
 	@discussion The default value is 7.

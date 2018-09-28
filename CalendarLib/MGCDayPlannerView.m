@@ -139,7 +139,6 @@ static const CGFloat kMaxHourSlotHeight = 150.;
 @property (nonatomic) CGFloat allDayEventCellHeight;			// height of an event cell in the all-day event view
 @property (nonatomic) CGFloat eventsViewInnerMargin;			// distance between top and first time line and between last line and bottom
 
-@property (nonatomic) UIScrollView *controllingScrollView;		// the collection view which initiated scrolling - used for proper synchronization between the different collection views
 @property (nonatomic) CGPoint scrollStartOffset;				// content offset in the controllingScrollView where scrolling started - used to lock scrolling in one direction
 @property (nonatomic) ScrollDirection scrollDirection;			// direction or axis of the scroll movement
 @property (nonatomic) NSDate *scrollTargetDate;                 // target date after scrolling (initiated programmatically or following pan or swipe gesture)
