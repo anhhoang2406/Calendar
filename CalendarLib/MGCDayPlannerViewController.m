@@ -133,11 +133,7 @@
     if (arrLang.firstObject != nil) {
         lang = arrLang.firstObject;
     }
-    if ([lang isEqualToString:@"ja"]) {
-        dateFormatter.dateFormat = self.formateDate ?: @"yyyy年MM月d日";
-    } else {
-        dateFormatter.dateFormat = self.formateDate ?: @"dd MMM yyyy, EEEE";
-    }
+    dateFormatter.dateFormat = self.formateDate ?: @"dd MMM yyyy, EEEE";
     
     NSString *sDay = [dateFormatter stringFromDate:[NSDate date]];
     _currentMonthLabel.numberOfLines = 2;
@@ -293,11 +289,7 @@
         lang = arrLang.firstObject;
     }
     if (_isShowWeekOfDate) {
-        if ([lang isEqualToString:@"ja"]) {
-            dateFormatter.dateFormat = @"MM";
-        } else {
-            dateFormatter.dateFormat = @"MMM";
-        }
+        dateFormatter.dateFormat = @"MMM";
         NSString *strStartMonth = [dateFormatter stringFromDate:startDate];
         NSString *strEndMonth = [dateFormatter stringFromDate:endDate];
         dateFormatter.dateFormat = @"d";
@@ -307,27 +299,7 @@
         NSString *strStartYear = [dateFormatter stringFromDate:startDate];
         NSString *strEndYear = [dateFormatter stringFromDate:endDate];
         
-        if ([strStartYear isEqualToString:strEndYear]) {
-            if ([strStartMonth isEqualToString:strEndMonth]) {
-                if ([lang isEqualToString:@"ja"]) {
-                    _currentMonthLabel.text = [NSString stringWithFormat:@"%@年%@月%@日～%@日", strStartYear, strStartMonth, strStartday, strEndDay];
-                } else {
-                    _currentMonthLabel.text = [NSString stringWithFormat:@"%@ %@ - %@, %@", strStartMonth, strStartday, strEndDay, strStartYear];
-                }
-            } else {
-                if ([lang isEqualToString:@"ja"]) {
-                    _currentMonthLabel.text = [NSString stringWithFormat:@"%@年%@月%@日～%@月%@日", strStartYear, strStartMonth, strStartday, strEndMonth, strEndDay];
-                } else {
-                    _currentMonthLabel.text = [NSString stringWithFormat:@"%@ %@ - %@ %@, %@", strStartMonth, strStartday, strEndMonth, strEndDay, strStartYear];
-                }
-            }
-        } else {
-            if ([lang isEqualToString:@"ja"]) {
-                _currentMonthLabel.text = [NSString stringWithFormat:@"%@年%@月%@日～%@年%@月%@日", strStartYear, strStartMonth, strStartday, strEndYear, strEndMonth, strEndDay];
-            } else {
-                _currentMonthLabel.text = [NSString stringWithFormat:@"%@ %@ %@ - %@ %@ %@", strStartYear, strStartMonth, strStartday, strEndYear, strEndMonth, strEndDay];
-            }
-        }
+        _currentMonthLabel.text = [NSString stringWithFormat:@"%@ %@ - %@, %@", strStartMonth, strStartday, strEndDay, strStartYear];
         
     } else {
         for (NSLayoutConstraint *cons in self.view.constraints) {
@@ -335,34 +307,10 @@
                 cons.constant = 30;
             }
         }
-        if ([lang isEqualToString:@"ja"]) {
-            dateFormatter.dateFormat = @"yyyy年MM月d日";
-        } else {
-            dateFormatter.dateFormat = @"MMM d, yyyy";
-        }
+        dateFormatter.dateFormat = @"MMM d, yyyy";
         NSString *strDate = [dateFormatter stringFromDate:startDate];
         dateFormatter.dateFormat = @"EEE";
         NSString *strDayOfWeed = [dateFormatter stringFromDate:startDate];
-        if ([lang isEqualToString:@"ja"]) {
-            if ([[strDayOfWeed lowercaseString] isEqualToString:@"mon"]) {
-                strDayOfWeed = @"月";
-            } else if ([[strDayOfWeed lowercaseString] isEqualToString:@"tue"]) {
-                strDayOfWeed = @"火";
-            } else if ([[strDayOfWeed lowercaseString] isEqualToString:@"wed"]) {
-                strDayOfWeed = @"水";
-            } else if ([[strDayOfWeed lowercaseString] isEqualToString:@"thu"]) {
-                strDayOfWeed = @"木";
-            } else if ([[strDayOfWeed lowercaseString] isEqualToString:@"fri"]) {
-                strDayOfWeed = @"金";
-            } else if ([[strDayOfWeed lowercaseString] isEqualToString:@"sat"]) {
-                strDayOfWeed = @"土";
-            } else if ([[strDayOfWeed lowercaseString] isEqualToString:@"sun"]) {
-                strDayOfWeed = @"日";
-            }
-        } else {
-            dateFormatter.dateFormat = @"EEEE";
-            strDayOfWeed = [dateFormatter stringFromDate:startDate];
-        }
         NSString *str = [NSString stringWithFormat:@"%@\n%@", strDate, strDayOfWeed];
         NSDictionary *attribs = @{NSForegroundColorAttributeName:UIColor.whiteColor,
                                   NSFontAttributeName: ([UIFont fontWithName:@"TUV Montserrat" size:16] ?: [UIFont systemFontOfSize:16])

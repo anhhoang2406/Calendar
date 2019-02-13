@@ -509,12 +509,12 @@ static const CGFloat kMaxHourSlotHeight = 150.;
             _startDate = [self.calendar mgc_startOfDayForDate:currentDate];
         } else {
             NSUInteger weekDay = [self.calendar components:NSCalendarUnitWeekday fromDate:currentDate].weekday;
-            if (weekDay != kSun) {
-//                if (weekDay == kSun) {
-//                    weekDay = kSat + 1;
-//                }
+            if (weekDay != kMon) {
+                if (weekDay == kSun) {
+                    weekDay = kSat + 1;
+                }
                 NSTimeInterval todayTimeInterval = [currentDate timeIntervalSince1970];
-                todayTimeInterval = todayTimeInterval - 60*60*24*(weekDay - kSun);
+                todayTimeInterval = todayTimeInterval - 60*60*24*(weekDay - kMon);
                 currentDate = [NSDate dateWithTimeIntervalSince1970:todayTimeInterval];
                 //currentDate = [currentDate addTimeInterval:60*60*24*(-(weekDay - kMon))];
             }
@@ -904,7 +904,7 @@ static const CGFloat kMaxHourSlotHeight = 150.;
 		_timedEventsView.directionalLockEnabled = YES;
 		
 		[_timedEventsView registerClass:MGCEventCell.class forCellWithReuseIdentifier:EventCellReuseIdentifier];
-        [_timedEventsView registerClass:UICollectionReusableView.class forSupplementaryViewOfKind:DimmingViewKind withReuseIdentifier:DimmingViewReuseIdentifier];
+        //[_timedEventsView registerClass:UICollectionReusableView.class forSupplementaryViewOfKind:DimmingViewKind withReuseIdentifier:DimmingViewReuseIdentifier];
 		//UILongPressGestureRecognizer *longPress = [UILongPressGestureRecognizer new];
 		//[longPress addTarget:self action:@selector(handleLongPress:)];
 		//[_timedEventsView addGestureRecognizer:longPress];
@@ -935,7 +935,7 @@ static const CGFloat kMaxHourSlotHeight = 150.;
 		
 		[_allDayEventsView registerClass:MGCEventCell.class forCellWithReuseIdentifier:EventCellReuseIdentifier];
 		
-		//[_allDayEventsView registerClass:UICollectionReusableView.class forSupplementaryViewOfKind:MoreEventsViewKind withReuseIdentifier:MoreEventsViewReuseIdentifier];  // test
+		[_allDayEventsView registerClass:UICollectionReusableView.class forSupplementaryViewOfKind:MoreEventsViewKind withReuseIdentifier:MoreEventsViewReuseIdentifier];
 		
 		UILongPressGestureRecognizer *longPress = [UILongPressGestureRecognizer new];
 		[longPress addTarget:self action:@selector(handleLongPress:)];
@@ -1914,11 +1914,7 @@ static const CGFloat kMaxHourSlotHeight = 150.;
         
         NSMutableParagraphStyle *para = [NSMutableParagraphStyle new];
         para.alignment = NSTextAlignmentCenter;
-        CGFloat size = 13;
-        if (isiPad) {
-            size = 15;
-        }
-        UIFont *font = [UIFont fontWithName:@"TUV Montserrat" size:size] ?: [UIFont boldSystemFontOfSize:size];
+        UIFont *font = [UIFont fontWithName:@"TUV Montserrat" size:15] ?: [UIFont boldSystemFontOfSize:15];
         dayCell.dotLayer.hidden = YES;
         dayCell.selectedView.hidden = YES;
         UIColor *color = UIColor.whiteColor;
@@ -2442,19 +2438,6 @@ static const CGFloat kMaxHourSlotHeight = 150.;
         NSInteger section = roundf(targetContentOffset->x / self.dayColumnSize.width);
         xOffset = section * self.dayColumnSize.width;
         self.scrollTargetDate = [self dateFromDayOffset:section];
-        NSCalendar *gregorian = [NSCalendar currentCalendar];
-        NSDateComponents *comps = [gregorian components:NSWeekdayCalendarUnit fromDate:self.scrollTargetDate];
-        int weekday = [comps weekday];
-        if (weekday < 4) {
-            self.scrollTargetDate = [self.scrollTargetDate dateByAddingTimeInterval:-(weekday - 1)*24*60*60];
-            section = [self dayOffsetFromDate:self.scrollTargetDate];
-            xOffset = [self xOffsetFromDayOffset:section];
-            //self.scrollTargetDate = [self dateFromDayOffset:(section - weekday - 1)];
-        } else {
-            xOffset = (section + (8 - weekday)) * self.dayColumnSize.width;
-            self.scrollTargetDate = [self.scrollTargetDate dateByAddingTimeInterval:(8 - weekday)*24*60*60];
-        }
-            
     }
     else if (self.pagingEnabled) {
         NSDate *date;
@@ -2462,18 +2445,16 @@ static const CGFloat kMaxHourSlotHeight = 150.;
         // scroll to next page
         if (velocity.x > 0) {
             date = [self nextDateForPagingAfterDate:self.visibleDays.start];
-//            NSCalendar *gregorian = [NSCalendar currentCalendar];
-//            NSDateComponents *comps = [gregorian components:NSWeekdayCalendarUnit fromDate:date];
-//            NSDateComponents *compsTargetDate = [gregorian components:NSWeekdayCalendarUnit fromDate:self.scrollTargetDate];
-//            int weekday = [comps weekday];
-//            int weekdayOfTargetDate = [compsTargetDate weekday];
-//            if (weekdayOfTargetDate + 6 > weekday) {
-//                date = [date dateByAddingTimeInterval:(7 - weekday)*24*60*60];
-//            } else {
-//                date = [date dateByAddingTimeInterval:-(weekday)*24*60*60];
-//            }
-            
-            //NSLog(@"hoang %d, %d, -- %@", weekday, weekdayOfTargetDate, date);
+            NSCalendar *gregorian = [NSCalendar currentCalendar];
+            NSDateComponents *comps = [gregorian components:NSWeekdayCalendarUnit fromDate:date];
+            NSDateComponents *compsTargetDate = [gregorian components:NSWeekdayCalendarUnit fromDate:self.scrollTargetDate];
+            int weekday = [comps weekday];
+            int weekdayOfTargetDate = [compsTargetDate weekday];
+            if (weekdayOfTargetDate + 6 > weekday) {
+                date = [date dateByAddingTimeInterval:(7 - weekday)*24*60*60];
+            } else {
+                date = [date dateByAddingTimeInterval:-(weekday)*24*60*60];
+            }
          }
         // scroll to previous page
         else {
